@@ -1,9 +1,9 @@
-// Copyright (c) 2020 The PIVX developers
+// Copyright (c) 2020 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
-#ifndef PIVX_SAPLING_OPERATION_H
-#define PIVX_SAPLING_OPERATION_H
+#ifndef OASIS_SAPLING_OPERATION_H
+#define OASIS_SAPLING_OPERATION_H
 
 #include "amount.h"
 #include "sapling/transaction_builder.h"
@@ -51,8 +51,8 @@ struct SendManyRecipient
     {}
 
     // Transparent recipient: P2CS
-    SendManyRecipient(const CKeyID& ownerKey, const CKeyID& stakerKey, const CAmount& amount, bool fV6Enforced):
-            recipient(new CRecipient(fV6Enforced ? GetScriptForStakeDelegation(stakerKey, ownerKey)
+    SendManyRecipient(const CKeyID& ownerKey, const CKeyID& stakerKey, const CAmount& amount, bool fVNextEnforced):
+            recipient(new CRecipient(fVNextEnforced ? GetScriptForStakeDelegation(stakerKey, ownerKey)
                         : GetScriptForStakeDelegationLOF(stakerKey, ownerKey), amount, false))
     {}
 
@@ -142,4 +142,4 @@ OperationResult GetMemoFromString(const std::string& s, std::array<unsigned char
 
 OperationResult CheckTransactionSize(std::vector<SendManyRecipient>& recipients, bool fromTaddr);
 
-#endif //PIVX_SAPLING_OPERATION_H
+#endif //OASIS_SAPLING_OPERATION_H

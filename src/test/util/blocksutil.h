@@ -1,9 +1,9 @@
-// Copyright (c) 2021 The PIVX developers
+// Copyright (c) 2021 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
-#ifndef PIVX_BLOCKSUTIL_H
-#define PIVX_BLOCKSUTIL_H
+#ifndef OASIS_BLOCKSUTIL_H
+#define OASIS_BLOCKSUTIL_H
 
 #include "primitives/block.h"
 #include <memory>
@@ -13,4 +13,4 @@ void ProcessBlockAndCheckRejectionReason(std::shared_ptr<CBlock>& pblock,
                                          const std::string& blockRejectionReason,
                                          int expectedChainHeight);
 
-#endif //PIVX_BLOCKSUTIL_H
+#endif //OASIS_BLOCKSUTIL_H

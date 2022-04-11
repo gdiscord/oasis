@@ -310,8 +310,7 @@ CBlockPolicyEstimator::CBlockPolicyEstimator(const CFeeRate& _minRelayFee)
 
 void CBlockPolicyEstimator::processTransaction(const CTxMemPoolEntry& entry, bool validFeeEstimate)
 {
-    if(entry.HasZerocoins() || entry.IsShielded()) {
-        // Zerocoin spends/mints had fixed feerate. Skip them for the estimates.
+    if(entry.IsShielded()) {
         return;
     }
 
@@ -339,7 +338,7 @@ void CBlockPolicyEstimator::processTransaction(const CTxMemPoolEntry& entry, boo
     }
     trackedTxs++;
 
-    // Feerates are stored and reported as PIV-per-kb:
+    // Feerates are stored and reported as XOS-per-kb:
     CFeeRate feeRate(entry.GetFee(), entry.GetTxSize());
 
     mapMemPoolTxs[hash].blockHeight = txHeight;
@@ -348,8 +347,7 @@ void CBlockPolicyEstimator::processTransaction(const CTxMemPoolEntry& entry, boo
 
 bool CBlockPolicyEstimator::processBlockTx(unsigned int nBlockHeight, const CTxMemPoolEntry* entry)
 {
-    if(entry->HasZerocoins() || entry->IsShielded()) {
-        // Zerocoin spends/mints had fixed feerate. Skip them for the estimates.
+    if(entry->IsShielded()) {
         return false;
     }
 
@@ -369,7 +367,7 @@ bool CBlockPolicyEstimator::processBlockTx(unsigned int nBlockHeight, const CTxM
         return false;
     }
 
-    // Feerates are stored and reported as PIV-per-kb:
+    // Feerates are stored and reported as XOS-per-kb:
     CFeeRate feeRate(entry->GetFee(), entry->GetTxSize());
 
     feeStats.Record(blocksToConfirm, (double)feeRate.GetFeePerK());

@@ -1,5 +1,6 @@
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -517,9 +518,9 @@ bool CBudgetManager::FillBlockPayee(CMutableTransaction& txCoinbase, CMutableTra
 
     CAmount blockValue = GetBlockValue(nHeight);
 
-    // Starting from PIVX v6.0 masternode and budgets are paid in the coinbase tx of PoS blocks
+    // Starting from OASIS vNext masternode and budgets are paid in the coinbase tx of PoS blocks
     const bool fPayCoinstake = fProofOfStake &&
-                               !Params().GetConsensus().NetworkUpgradeActive(nHeight, Consensus::UPGRADE_V6_0);
+                               !Params().GetConsensus().NetworkUpgradeActive(nHeight, Consensus::UPGRADE_VNEXT);
 
     if (fProofOfStake) {
         if (fPayCoinstake) {
@@ -1638,8 +1639,8 @@ bool CheckCollateral(const uint256& nTxCollateralHash, const uint256& nExpectedH
         }
         if (fBudgetFinalization) {
             // Collateral for budget finalization
-            // Note: there are still old valid budgets out there, but the check for the new 5 PIV finalization collateral
-            //       will also cover the old 50 PIV finalization collateral.
+            // Note: there are still old valid budgets out there, but the check for the new 5 XOS finalization collateral
+            //       will also cover the old 50 XOS finalization collateral.
             LogPrint(BCLog::MNBUDGET, "Final Budget: o.scriptPubKey(%s) == findScript(%s) ?\n", HexStr(o.scriptPubKey), HexStr(findScript));
             if (o.scriptPubKey == findScript) {
                 LogPrint(BCLog::MNBUDGET, "Final Budget: o.nValue(%ld) >= BUDGET_FEE_TX(%ld) ?\n", o.nValue, BUDGET_FEE_TX);

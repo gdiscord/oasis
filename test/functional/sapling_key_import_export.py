@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Copyright (c) 2017 The Zcash developers
-# Copyright (c) 2020 The PIVX developers
+# Copyright (c) 2020 The OASIS developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or https://www.opensource.org/licenses/mit-license.php .
 
@@ -114,7 +114,7 @@ class SaplingkeyImportExportTest (PivxTestFramework):
         bob_fee = Decimal("0")
 
         # Try to reproduce zombie balance reported in zcash#1936
-        # At generated shield_addr, receive PIV, and send PIV back out. bob -> alice
+        # At generated shield_addr, receive XOS, and send XOS back out. bob -> alice
         for amount in amounts[:2]:
             print("Sending amount from bob to alice: ", amount)
             txid = shielded_send(bob, bob_addr, alice_addr, amount)

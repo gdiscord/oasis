@@ -1,5 +1,5 @@
 // Copyright (c) 2018 The Zcash developers
-// Copyright (c) 2020 The PIVX developers
+// Copyright (c) 2020 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,7 +15,7 @@
 const struct NUInfo NetworkUpgradeInfo[Consensus::MAX_NETWORK_UPGRADES] = {
         {
                 /*.strName =*/ "Base",
-                /*.strInfo =*/ "PIVX network",
+                /*.strInfo =*/ "OASIS network - block v5",
         },
         {
                 /*.strName =*/ "PoS",
@@ -26,43 +26,23 @@ const struct NUInfo NetworkUpgradeInfo[Consensus::MAX_NETWORK_UPGRADES] = {
                 /*.strInfo =*/ "New selection for stake modifier",
         },
         {
-                /*.strName =*/ "Zerocoin",
-                /*.strInfo =*/ "ZeroCoin protocol activation - start block v4",
-        },
-        {
-                /*.strName =*/ "Zerocoin_v2",
-                /*.strInfo =*/ "New zerocoin serials and zPOS start",
-        },
-        {
                 /*.strName =*/ "BIP65",
-                /*.strInfo =*/ "CLTV (BIP65) activation - start block v5",
+                /*.strInfo =*/ "CLTV (BIP65) activation",
         },
         {
-                /*.strName =*/ "Zerocoin_Public",
-                /*.strInfo =*/ "Activation of zerocoin public spends (spend v3)",
+                /*.strName =*/ "TIME_V2",
+                /*.strInfo =*/ "Time protocol version 2",
         },
         {
-                /*.strName =*/ "PIVX_v3.4",
-                /*.strInfo =*/ "New 256-bit stake modifier - start block v6",
+                /*.strName =*/ "MESG_V2",
+                /*.strInfo =*/ "Message signatures version 2",
         },
         {
-                /*.strName =*/ "PIVX_v4.0",
-                /*.strInfo =*/ "New message sigs - start block v7 - time protocol - zc spend v4",
+                /*.strName =*/ "OASIS_v4",
+                /*.strInfo =*/ "Sapling Shield, New cold-staking rules, New staking rules - start block v6 - start transaction v3",
         },
         {
-                /*.strName =*/ "v5_shield",
-                /*.strInfo =*/ "Sapling Shield - start block v8 - start transaction v3",
-        },
-        {
-                /*.strName =*/ "PIVX_v5.2",
-                /*.strInfo =*/ "New cold-staking rules",
-        },
-        {
-                /*.strName =*/ "PIVX_v5.3",
-                /*.strInfo =*/ "New staking rules",
-        },
-        {
-                /*.strName =*/ "v6_evo",
+                /*.strName =*/ "vNext_evo",
                 /*.strInfo =*/ "Deterministic Masternodes",
         },
         {

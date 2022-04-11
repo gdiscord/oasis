@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2017-2020 The PIVX developers
+// Copyright (c) 2017-2020 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -133,9 +133,7 @@ void ScriptPubKeyToUniv(const CScript& scriptPubKey,
         out.pushKV("hex", HexStr(scriptPubKey));
 
     if (!ExtractDestinations(scriptPubKey, type, addresses, nRequired)) {
-        if (!scriptPubKey.empty() && scriptPubKey.IsZerocoinMint()) {
-            out.pushKV("type", "zerocoinmint"); // unsupported type.
-        } else {
+        if (!scriptPubKey.empty()) {
             out.pushKV("type", GetTxnOutputType(type));
         }
         return;

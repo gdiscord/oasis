@@ -1,5 +1,6 @@
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -419,7 +420,7 @@ bool CMasternodeSync::SyncWithNode(CNode* pnode, bool fLegacyMnObsolete)
                 syncTimeout("MASTERNODE_SYNC_MNW");
             } else {
                 SwitchToNextAsset();
-                // Same as above (future: remove all of this duplicated code in v6.0.)
+                // Same as above (future: remove all of this duplicated code in vNext.)
                 // in case we received a budget item while we were syncing the mnw, let's reset the last budget item received time.
                 // reason: if we received for example a single proposal +50 seconds ago, then once the budget sync starts (right after this call),
                 // it will look like the sync is finished, and will not wait to receive any budget data and declare the sync over.

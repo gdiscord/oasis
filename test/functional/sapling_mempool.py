@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2020 The PIVX Core developers
+# Copyright (c) 2020 The OASIS Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -33,7 +33,7 @@ class SaplingMempoolTest(PivxTestFramework):
         # Sanity-check the test harness
         assert_equal([x.getblockcount() for x in self.nodes], [120] * self.num_nodes)
 
-        # miner sends a 10 PIV note to Alice
+        # miner sends a 10 XOS note to Alice
         self.log.info("Shielding some coins for Alice...")
         alice_zaddr = alice.getnewshieldaddress()
         miner.shieldsendmany("from_transparent", [{"address": alice_zaddr, "amount": Decimal('10.00')}], 1, fee)
@@ -73,7 +73,7 @@ class SaplingMempoolTest(PivxTestFramework):
                                 alice.sendrawtransaction, rawTx_hex)
         self.log.info("tx_A NOT accepted in the mempool. Good.")
 
-        # miner sends another 10 PIV note to Alice
+        # miner sends another 10 XOS note to Alice
         self.log.info("Shielding some more coins for Alice...")
         miner.shieldsendmany("from_transparent", [{"address": alice_zaddr, "amount": Decimal('10.00')}], 1, fee)
         miner.generate(1)

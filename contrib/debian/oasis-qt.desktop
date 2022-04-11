@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=OASIS Core
+Comment=OASIS P2P Cryptocurrency
+Comment[fr]=OASIS, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=OASIS, eşten eşe kriptografik sanal para birimi
+Exec=oasis-qt %u
+Terminal=false
+Type=Application
+Icon=oasis128
+MimeType=x-scheme-handler/oasis;
+Categories=Office;Finance;
+StartupWMClass=Pivx-qt

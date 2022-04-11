@@ -1,14 +1,14 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2016 The Dash developers
-// Copyright (c) 2017-2020 The PIVX developers
+// Copyright (c) 2017-2020 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef PIVX_QT_WALLETMODEL_H
-#define PIVX_QT_WALLETMODEL_H
+#ifndef OASIS_QT_WALLETMODEL_H
+#define OASIS_QT_WALLETMODEL_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/pivx-config.h"
+#include "config/oasis-config.h"
 #endif
 
 #include "interfaces/wallet.h"
@@ -105,7 +105,7 @@ public:
     }
 };
 
-/** Interface to PIVX wallet from Qt view code. */
+/** Interface to OASIS wallet from Qt view code. */
 class WalletModel : public QObject
 {
     Q_OBJECT
@@ -150,7 +150,7 @@ public:
     /** Whether cold staking is enabled or disabled in the network **/
     bool isColdStakingNetworkelyEnabled() const;
     bool isSaplingInMaintenance() const;
-    bool isV6Enforced() const;
+    bool isVNextEnforced() const;
     CAmount getMinColdStakingAmount() const;
     /* current staking status from the miner thread **/
     bool isStakingStatusActive() const;
@@ -166,6 +166,10 @@ public:
 
     interfaces::WalletBalances GetWalletBalances() { return m_cached_balances; };
 
+   /* Fetch XOS's prices (updated periodically by spork) */
+    // USD
+    int getPriceUSD() const;
+    
     CAmount getBalance(const CCoinControl* coinControl = nullptr, bool fIncludeDelegated = true, bool fUnlockedOnly = false, bool fIncludeShielded = true) const;
     CAmount getUnlockedBalance(const CCoinControl* coinControl = nullptr, bool fIncludeDelegated = true, bool fIncludeShielded = true) const;
     CAmount getLockedBalance() const;
@@ -459,4 +463,4 @@ public Q_SLOTS:
     bool updateAddressBookLabels(const CWDestination& address, const std::string& strName, const std::string& strPurpose);
 };
 
-#endif // PIVX_QT_WALLETMODEL_H
+#endif // OASIS_QT_WALLETMODEL_H

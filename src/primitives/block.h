@@ -1,6 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2013 The Bitcoin developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -23,15 +24,14 @@ class CBlockHeader
 {
 public:
     // header
-    static const int32_t CURRENT_VERSION=11;    // since v5.2.99
+    static const int32_t CURRENT_VERSION=6; //since v4.0.0
     int32_t nVersion;
     uint256 hashPrevBlock;
     uint256 hashMerkleRoot;
     uint32_t nTime;
     uint32_t nBits;
     uint32_t nNonce;
-    uint256 nAccumulatorCheckpoint;             // only for version 4, 5 and 6.
-    uint256 hashFinalSaplingRoot;               // only for version 8+
+    uint256 hashFinalSaplingRoot;
 
     CBlockHeader()
     {
@@ -41,12 +41,8 @@ public:
     SERIALIZE_METHODS(CBlockHeader, obj) {
         READWRITE(obj.nVersion, obj.hashPrevBlock, obj.hashMerkleRoot, obj.nTime, obj.nBits, obj.nNonce);
 
-        //zerocoin active, header changes to include accumulator checksum
-        if(obj.nVersion > 3 && obj.nVersion < 7)
-            READWRITE(obj.nAccumulatorCheckpoint);
-
         // Sapling active
-        if (obj.nVersion >= 8)
+        if (obj.nVersion >= 6)
             READWRITE(obj.hashFinalSaplingRoot);
     }
 
@@ -58,7 +54,6 @@ public:
         nTime = 0;
         nBits = 0;
         nNonce = 0;
-        nAccumulatorCheckpoint.SetNull();
         hashFinalSaplingRoot.SetNull();
     }
 
@@ -124,9 +119,7 @@ public:
         block.nTime          = nTime;
         block.nBits          = nBits;
         block.nNonce         = nNonce;
-        if(nVersion > 3 && nVersion < 7)
-            block.nAccumulatorCheckpoint = nAccumulatorCheckpoint;
-        if (nVersion >= 8)
+        if (nVersion >= 6)
             block.hashFinalSaplingRoot   = hashFinalSaplingRoot;
         return block;
     }

@@ -1,6 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2016 The Dash developers
-// Copyright (c) 2016-2020 The PIVX developers
+// Copyright (c) 2016-2020 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -76,9 +76,10 @@ public:
         Other = 0,
         Generated,
         StakeMint,
-        StakeZPIV,
+        StakeZXOS,
         SendToAddress,
         SendToOther,
+        Burned,
         RecvWithAddress,
         MNReward,
         BudgetPayment,
@@ -101,7 +102,7 @@ public:
         SendToSelfShieldedAddress, // Shielded send to self
         SendToSelfShieldToTransparent, // Unshield coins to self
         SendToSelfShieldToShieldChangeAddress, // Changing coins from one shielded address to another inside the wallet.
-        SendToNobody // Burned PIVs, op_return output.
+        SendToNobody // Burned XOSs, op_return output.
     };
 
     /** Number of confirmation recommended for accepting a transaction */
@@ -127,10 +128,6 @@ public:
 
     /// Helpers
     static bool decomposeCoinStake(const CWallet* wallet, const CWalletTx& wtx,
-                                   const CAmount& nCredit, const CAmount& nDebit,
-                                   QList<TransactionRecord>& parts);
-
-    static bool decomposeZcSpendTx(const CWallet* wallet, const CWalletTx& wtx,
                                    const CAmount& nCredit, const CAmount& nDebit,
                                    QList<TransactionRecord>& parts);
 

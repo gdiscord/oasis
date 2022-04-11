@@ -1,6 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2016 The Dash developers
-// Copyright (c) 2016-2020 The PIVX developers
+// Copyright (c) 2016-2020 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -452,7 +452,7 @@ QString TransactionTableModel::formatTxType(const TransactionRecord* wtx) const
         return tr("Shielded change, transfer between own shielded addresses");
     case TransactionRecord::StakeMint:
         return tr("%1 Stake").arg(CURRENCY_UNIT.c_str());
-    case TransactionRecord::StakeZPIV:
+    case TransactionRecord::StakeZXOS:
         return tr("z%1 Stake").arg(CURRENCY_UNIT.c_str());
     case TransactionRecord::StakeDelegated:
         return tr("%1 Cold Stake").arg(CURRENCY_UNIT.c_str());
@@ -482,7 +482,7 @@ QString TransactionTableModel::formatTxType(const TransactionRecord* wtx) const
     case TransactionRecord::SendToShielded:
         return tr("Shielded send to");
     case TransactionRecord::SendToNobody:
-        return tr("Burned PIVs");
+        return tr("Burned XOSs");
     default:
         return QString();
     }
@@ -493,7 +493,7 @@ QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord* wtx
     switch (wtx->type) {
     case TransactionRecord::Generated:
     case TransactionRecord::StakeMint:
-    case TransactionRecord::StakeZPIV:
+    case TransactionRecord::StakeZXOS:
     case TransactionRecord::MNReward:
     case TransactionRecord::BudgetPayment:
         return QIcon(":/icons/tx_mined");
@@ -503,8 +503,9 @@ QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord* wtx
         return QIcon(":/icons/tx_input");
     case TransactionRecord::SendToAddress:
     case TransactionRecord::SendToOther:
-    case TransactionRecord::ZerocoinSpend:
         return QIcon("://ic-transaction-sent");
+    case TransactionRecord::Burned:
+        return QIcon("://ic-transaction-burn");
     default:
         return QIcon(":/icons/tx_inout");
     }
@@ -527,9 +528,6 @@ QString TransactionTableModel::formatTxToAddress(const TransactionRecord* wtx, b
     case TransactionRecord::SendToAddress:
     case TransactionRecord::Generated:
     case TransactionRecord::StakeMint:
-    case TransactionRecord::ZerocoinSpend:
-    case TransactionRecord::ZerocoinSpend_FromMe:
-    case TransactionRecord::RecvFromZerocoinSpend:
         return lookupAddress(wtx->address, tooltip);
     case TransactionRecord::RecvWithShieldedAddress:
     case TransactionRecord::SendToShielded:
@@ -539,10 +537,8 @@ QString TransactionTableModel::formatTxToAddress(const TransactionRecord* wtx, b
         return QString::fromStdString(wtx->address) + watchAddress;
     case TransactionRecord::SendToNobody:
         return QString::fromStdString(wtx->address); // the address here is storing the op_return data.
-    case TransactionRecord::ZerocoinMint:
-    case TransactionRecord::ZerocoinSpend_Change_zPiv:
-    case TransactionRecord::StakeZPIV:
-        return tr("Anonymous");
+    case TransactionRecord::Burned:
+        return "";
     case TransactionRecord::P2CSDelegation:
     case TransactionRecord::P2CSDelegationSent:
     case TransactionRecord::P2CSDelegationSentOwner:
@@ -703,7 +699,7 @@ QVariant TransactionTableModel::data(const QModelIndex& index, int role) const
     case Qt::ForegroundRole:
         // Minted
         if (rec->type == TransactionRecord::Generated || rec->type == TransactionRecord::StakeMint ||
-                rec->type == TransactionRecord::StakeZPIV || rec->type == TransactionRecord::MNReward) {
+                rec->type == TransactionRecord::StakeZXOS || rec->type == TransactionRecord::MNReward) {
             if (rec->status.status == TransactionStatus::Conflicted || rec->status.status == TransactionStatus::NotAccepted)
                 return COLOR_ORPHAN;
             else

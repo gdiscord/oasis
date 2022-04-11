@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2019-2020 The PIVX developers
+# Copyright (c) 2019-2020 The OASIS developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -23,7 +23,7 @@ def getDelegatedUtxos(utxos):
     return [x for x in utxos if x["scriptPubKey"][:10] == '76a97b63d1' or x["scriptPubKey"][:10] == '76a97b63d2']
 
 
-class PIVX_ColdStakingTest(PivxTestFramework):
+class OASIS_ColdStakingTest(PivxTestFramework):
 
     def set_test_params(self):
         self.num_nodes = 3
@@ -33,7 +33,7 @@ class PIVX_ColdStakingTest(PivxTestFramework):
         self.enable_mocktime()
 
     def setColdStakingEnforcement(self, fEnable=True):
-        sporkName = "SPORK_19_COLDSTAKING_MAINTENANCE"
+        sporkName = "SPORK_18_COLDSTAKING_MAINTENANCE"
         # update spork 19 with node[0]
         if fEnable:
             self.log.info("Enabling cold staking with SPORK 19...")
@@ -49,7 +49,7 @@ class PIVX_ColdStakingTest(PivxTestFramework):
 
     def isColdStakingEnforced(self):
         # verify from node[1]
-        return not self.is_spork_active(1, "SPORK_19_COLDSTAKING_MAINTENANCE")
+        return not self.is_spork_active(1, "SPORK_18_COLDSTAKING_MAINTENANCE")
 
     def run_test(self):
         self.description = "Performs tests on the Cold Staking P2CS implementation"
@@ -310,7 +310,7 @@ class PIVX_ColdStakingTest(PivxTestFramework):
         assert_greater_than(len(stakeInputs), 0)
         # Create the block
         new_block = self.stake_next_block(1, stakeInputs, self.mocktime, staker_privkey)
-        # Add output (dummy key address) to coinstake (taking 100 PIV from the pot)
+        # Add output (dummy key address) to coinstake (taking 100 XOS from the pot)
         self.add_output_to_coinstake(new_block, 100)
         self.log.info("New block created (rawtx) by cold-staking. Trying to submit...")
         # Try to submit the block
@@ -458,4 +458,4 @@ class PIVX_ColdStakingTest(PivxTestFramework):
 
 
 if __name__ == '__main__':
-    PIVX_ColdStakingTest().main()
+    OASIS_ColdStakingTest().main()

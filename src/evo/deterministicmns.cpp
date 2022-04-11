@@ -1,5 +1,5 @@
 // Copyright (c) 2018-2021 The Dash Core developers
-// Copyright (c) 2021 The PIVX developers
+// Copyright (c) 2021 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -858,7 +858,7 @@ CDeterministicMNList CDeterministicMNManager::GetListForBlock(const CBlockIndex*
         if (!evoDb.Read(std::make_pair(DB_LIST_DIFF, pindex->GetBlockHash()), diff)) {
             // no snapshot and no diff on disk means that it's initial snapshot (empty list)
             // If we get here, then this must be the block before the enforcement of DIP3.
-            if (!IsActivationHeight(pindex->nHeight + 1, Params().GetConsensus(), Consensus::UPGRADE_V6_0)) {
+            if (!IsActivationHeight(pindex->nHeight + 1, Params().GetConsensus(), Consensus::UPGRADE_VNEXT)) {
                 std::string err = strprintf("No masternode list data found for block %s at height %d. "
                                             "Possible corrupt database.", pindex->GetBlockHash().ToString(), pindex->nHeight);
                 throw std::runtime_error(err);
@@ -907,7 +907,7 @@ CDeterministicMNList CDeterministicMNManager::GetListAtChainTip()
 
 bool CDeterministicMNManager::IsDIP3Enforced(int nHeight) const
 {
-    return Params().GetConsensus().NetworkUpgradeActive(nHeight, Consensus::UPGRADE_V6_0);
+    return Params().GetConsensus().NetworkUpgradeActive(nHeight, Consensus::UPGRADE_VNEXT);
 }
 
 bool CDeterministicMNManager::IsDIP3Enforced() const

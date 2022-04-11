@@ -1,5 +1,5 @@
 // Copyright (c) 2017 The Dash Core developers
-// Copyright (c) 2020 The PIVX Core developers
+// Copyright (c) 2020 The OASIS Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -106,7 +106,7 @@ bool CheckSpecialTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CVali
         return true;
     }
 
-    if (!Params().GetConsensus().NetworkUpgradeActive(pindexPrev->nHeight + 1, Consensus::UPGRADE_V6_0)) {
+    if (!Params().GetConsensus().NetworkUpgradeActive(pindexPrev->nHeight + 1, Consensus::UPGRADE_VNEXT)) {
         return state.DoS(100, error("%s: Special tx when v6 upgrade not enforced yet", __func__),
                          REJECT_INVALID, "bad-txns-v6-not-active");
     }

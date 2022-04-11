@@ -1,5 +1,5 @@
 // Copyright (c) 2019 The Bitcoin Core developers
-// Copyright (c) 2021 The PIVX Core developers
+// Copyright (c) 2021 The OASIS Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
@@ -89,7 +89,6 @@ void test_one_input(std::vector<uint8_t> buffer)
     (void)tx.isSaplingVersion();
     (void)tx.hasSaplingData();
     (void)tx.HasP2CSOutputs();
-    (void)tx.ContainsZerocoins();
     (void)tx.IsNull();
     (void)tx.ToString();
 

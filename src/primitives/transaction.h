@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2015-2021 The PIVX developers
+// Copyright (c) 2015-2021 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
@@ -109,8 +109,6 @@ public:
     bool IsFinal() const { return nSequence == SEQUENCE_FINAL; }
     bool IsNull() const { return prevout.IsNull() && scriptSig.empty() && IsFinal(); }
 
-    bool IsZerocoinSpend() const;
-    bool IsZerocoinPublicSpend() const;
 
     friend bool operator==(const CTxIn& a, const CTxIn& b)
     {
@@ -172,8 +170,6 @@ public:
     }
 
     uint256 GetHash() const;
-
-    bool IsZerocoinMint() const;
 
     friend bool operator==(const CTxOut& a, const CTxOut& b)
     {
@@ -357,18 +353,11 @@ public:
     // Return sum of (positive valueBalance or zero) and JoinSplit vpub_new
     CAmount GetShieldedValueIn() const;
 
-    bool HasZerocoinSpendInputs() const;
 
-    bool HasZerocoinMintOutputs() const;
-
-    bool ContainsZerocoins() const
-    {
-        return HasZerocoinSpendInputs() || HasZerocoinMintOutputs();
-    }
 
     bool IsCoinBase() const
     {
-        return (vin.size() == 1 && vin[0].prevout.IsNull() && !vin[0].scriptSig.IsZerocoinSpend());
+        return (vin.size() == 1 && vin[0].prevout.IsNull() );
     }
 
     bool IsCoinStake() const;

@@ -1,12 +1,12 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2021 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2021 The PIVX developers
+// Copyright (c) 2015-2021 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/pivx-config.h"
+#include "config/oasis-config.h"
 #endif
 
 #include "wallet/wallet.h"
@@ -26,7 +26,6 @@
 #include "util/validation.h"
 #include "utilmoneystr.h"
 #include "wallet/fees.h"
-#include "zpivchain.h"
 
 #include <future>
 #include <boost/algorithm/string/replace.hpp>
@@ -43,7 +42,7 @@ bool fPayAtLeastCustomFee = true;
 bool bSpendZeroConfChange = DEFAULT_SPEND_ZEROCONF_CHANGE;
 
 /**
- * Fees smaller than this (in upiv) are considered zero fee (for transaction creation)
+ * Fees smaller than this (in uxos) are considered zero fee (for transaction creation)
  * We are ~100 times smaller then bitcoin now (2015-06-23), set minTxFee 10 times higher
  * so it's still 10 times lower comparing to bitcoin.
  * Override with -mintxfee
@@ -634,7 +633,7 @@ std::set<uint256> CWallet::GetConflicts(const uint256& txid) const
     std::pair<TxSpends::const_iterator, TxSpends::const_iterator> range;
 
     for (const CTxIn& txin : wtx.tx->vin) {
-        if (mapTxSpends.count(txin.prevout) <= 1 || wtx.tx->HasZerocoinSpendInputs())
+        if (mapTxSpends.count(txin.prevout) <= 1 )
             continue; // No conflict if zero or one spends
         range = mapTxSpends.equal_range(txin.prevout);
         for (TxSpends::const_iterator _it = range.first; _it != range.second; ++_it)
@@ -1101,7 +1100,7 @@ bool CWallet::AddToWalletIfInvolvingMe(const CTransactionRef& ptx, const CWallet
     {
         AssertLockHeld(cs_wallet);
 
-        if (!confirm.hashBlock.IsNull() && !tx.HasZerocoinSpendInputs() && !tx.IsCoinBase()) {
+        if (!confirm.hashBlock.IsNull()  && !tx.IsCoinBase()) {
             for (const CTxIn& txin : tx.vin) {
                 std::pair<TxSpends::const_iterator, TxSpends::const_iterator> range = mapTxSpends.equal_range(txin.prevout);
                 while (range.first != range.second) {
@@ -1358,7 +1357,7 @@ void CWallet::BlockConnected(const std::shared_ptr<const CBlock>& pblock, const 
         SaplingMerkleTree oldSaplingTree;
         bool isSaplingActive = (pprev) != nullptr &&
                                Params().GetConsensus().NetworkUpgradeActive(pprev->nHeight,
-                                                                            Consensus::UPGRADE_V5_0);
+                                                                            Consensus::UPGRADE_V4_0);
         if (isSaplingActive) {
             assert(pcoinsTip->GetSaplingAnchorAt(pprev->hashFinalSaplingRoot, oldSaplingTree));
         } else {
@@ -1394,7 +1393,7 @@ void CWallet::BlockDisconnected(const std::shared_ptr<const CBlock>& pblock, con
         SyncTransaction(ptx, confirm);
     }
 
-    if (Params().GetConsensus().NetworkUpgradeActive(nBlockHeight, Consensus::UPGRADE_V5_0)) {
+    if (Params().GetConsensus().NetworkUpgradeActive(nBlockHeight, Consensus::UPGRADE_V4_0)) {
         // Update Sapling cached incremental witnesses
         m_sspk_man->DecrementNoteWitnesses(nBlockHeight);
         m_sspk_man->UpdateSaplingNullifierNoteMapForBlock(pblock.get());
@@ -1432,11 +1431,9 @@ void CWallet::MarkAffectedTransactionsDirty(const CTransaction& tx)
     // available of the outputs it spends. So force those to be
     // recomputed, also:
     for (const CTxIn& txin : tx.vin) {
-        if (!txin.IsZerocoinSpend()) {
-            auto it = mapWallet.find(txin.prevout.hash);
-            if (it != mapWallet.end()) {
-                it->second.MarkDirty();
-            }
+        auto it = mapWallet.find(txin.prevout.hash);
+        if (it != mapWallet.end()) {
+            it->second.MarkDirty();
         }
     }
 
@@ -1787,26 +1784,21 @@ void CWalletTx::GetAmounts(std::list<COutputEntry>& listReceived,
     }
 
     // Sent/received.
-    bool hasZerocoinSpends = tx->HasZerocoinSpendInputs();
     for (unsigned int i = 0; i < tx->vout.size(); ++i) {
         const CTxOut& txout = tx->vout[i];
         isminetype fIsMine = pwallet->IsMine(txout);
         // Only need to handle txouts if AT LEAST one of these is true:
         //   1) they debit from us (sent)
         //   2) the output is to us (received)
-        if (nDebit > 0) {
+        if (nDebit > 0)
             // Don't report 'change' txouts
             if (pwallet->IsChange(txout))
                 continue;
-        } else if (!(fIsMine & filter) && !hasZerocoinSpends)
-            continue;
 
         // In either case, we need to get the destination address
         const bool fColdStake = (filter & ISMINE_COLD);
         CTxDestination address;
-        if (txout.IsZerocoinMint()) {
-            address = CNoDestination();
-        } else if (!ExtractDestination(txout.scriptPubKey, address, fColdStake)) {
+        if (!ExtractDestination(txout.scriptPubKey, address, fColdStake)) {
             if (!IsCoinStake() && !IsCoinBase()) {
                 LogPrintf("CWalletTx::GetAmounts: Unknown transaction type found, txid %s\n", this->GetHash().ToString());
             }
@@ -1956,7 +1948,7 @@ CBlockIndex* CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, CBlock
                 // This should never fail: we should always be able to get the tree
                 // state on the path to the tip of our chain
                 if (pindex->pprev) {
-                    if (Params().GetConsensus().NetworkUpgradeActive(pindex->pprev->nHeight, Consensus::UPGRADE_V5_0)) {
+                    if (Params().GetConsensus().NetworkUpgradeActive(pindex->pprev->nHeight, Consensus::UPGRADE_V4_0)) {
                         SaplingMerkleTree saplingTree;
                         assert(pcoinsTip->GetSaplingAnchorAt(pindex->pprev->hashFinalSaplingRoot, saplingTree));
                         // Increment note witness caches
@@ -2449,7 +2441,7 @@ bool CWallet::GetMasternodeVinAndKeys(CTxIn& txinRet, CPubKey& pubKeyRet, CKey& 
 
     // Masternode collateral value
     if (txOut.nValue != Params().GetConsensus().nMNCollateralAmt) {
-        strError = strprintf("Invalid collateral tx value, must be %s PIV", FormatMoney(Params().GetConsensus().nMNCollateralAmt));
+        strError = strprintf("Invalid collateral tx value, must be %s XOS", FormatMoney(Params().GetConsensus().nMNCollateralAmt));
         return error("%s: tx %s, index %d not a masternode collateral", __func__, strTxHash, nOutputIndex);
     }
 
@@ -2690,7 +2682,7 @@ static void ApproximateBestSubset(const std::vector<std::pair<CAmount, std::pair
 
 bool CWallet::StakeableCoins(std::vector<CStakeableOutput>* pCoins)
 {
-    const bool fIncludeColdStaking = !sporkManager.IsSporkActive(SPORK_19_COLDSTAKING_MAINTENANCE) &&
+    const bool fIncludeColdStaking = !sporkManager.IsSporkActive(SPORK_18_COLDSTAKING_MAINTENANCE) &&
                                      gArgs.GetBoolArg("-coldstaking", DEFAULT_COLDSTAKING);
 
     if (pCoins) pCoins->clear();
@@ -3117,7 +3109,7 @@ bool CWallet::CreateTransaction(const std::vector<CRecipient>& vecSend,
                 if (nChange > 0) {
                     // Fill a vout to ourself
                     // TODO: pass in scriptChange instead of reservekey so
-                    // change transaction isn't always pay-to-pivx-address
+                    // change transaction isn't always pay-to-oasis-address
                     bool combineChange = false;
 
                     // coin control: send change to custom address
@@ -3476,7 +3468,6 @@ CWallet::CommitResult CWallet::CommitTransaction(CTransactionRef tx, CReserveKey
             AddToWallet(wtxNew);
 
             // Notify that old coins are spent
-            if (!wtxNew.tx->HasZerocoinSpendInputs()) {
                 std::set<uint256> updated_hashes;
                 for (const CTxIn& txin : wtxNew.tx->vin) {
                     // notify only once
@@ -3487,7 +3478,6 @@ CWallet::CommitResult CWallet::CommitTransaction(CTransactionRef tx, CReserveKey
                     NotifyTransactionChanged(this, txin.prevout.hash, CT_UPDATED);
                     updated_hashes.insert(txin.prevout.hash);
                 }
-            }
         }
 
         res.hashTx = wtxNew.GetHash();
@@ -4216,7 +4206,7 @@ CWallet* CWallet::CreateWalletFromFile(const std::string& name, const fs::path& 
     const bool fLegacyWallet = gArgs.GetBoolArg("-legacywallet", false);
     if (gArgs.GetBoolArg("-upgradewallet", fFirstRun && !fLegacyWallet) ||
             (!walletInstance->IsLocked() && prev_version == FEATURE_PRE_SPLIT_KEYPOOL)) {
-        if (prev_version <= FEATURE_PRE_PIVX && walletInstance->IsLocked()) {
+        if (prev_version <= FEATURE_PRE_OASIS && walletInstance->IsLocked()) {
             // Cannot upgrade a locked wallet
             UIError(_("Cannot upgrade a locked wallet."));
             return nullptr;
@@ -4263,7 +4253,7 @@ CWallet* CWallet::CreateWalletFromFile(const std::string& name, const fs::path& 
             }
             // Create legacy wallet
             LogPrintf("Creating Pre-HD Wallet\n");
-            walletInstance->SetMaxVersion(FEATURE_PRE_PIVX);
+            walletInstance->SetMaxVersion(FEATURE_PRE_OASIS);
         }
 
         // Top up the keypool
@@ -4466,7 +4456,7 @@ void CWallet::SetNull()
     // Stake split threshold
     nStakeSplitThreshold = DEFAULT_STAKE_SPLIT_THRESHOLD;
 
-    // User-defined fee PIV/kb
+    // User-defined fee XOS/kb
     fUseCustomFee = false;
     nCustomFee = CWallet::minTxFee.GetFeePerK();
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2020 The PIVX developers
+// Copyright (c) 2017-2020 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
@@ -11,21 +11,11 @@
 static bool HasStakeMinAgeOrDepth(int nHeight, uint32_t nTime, const CBlockIndex* pindex)
 {
     const Consensus::Params& consensus = Params().GetConsensus();
-    if (consensus.NetworkUpgradeActive(nHeight + 1, Consensus::UPGRADE_ZC_PUBLIC) &&
-            !consensus.HasStakeMinAgeOrDepth(nHeight, nTime, pindex->nHeight, pindex->nTime)) {
-        return error("%s : min age violation - height=%d - time=%d, nHeightBlockFrom=%d, nTimeBlockFrom=%d",
-                     __func__, nHeight, nTime, pindex->nHeight, pindex->nTime);
-    }
     return true;
 }
 
 CPivStake* CPivStake::NewPivStake(const CTxIn& txin, int nHeight, uint32_t nTime)
 {
-    if (txin.IsZerocoinSpend()) {
-        error("%s: unable to initialize CPivStake from zerocoin spend", __func__);
-        return nullptr;
-    }
-
     // Look for the stake input in the coins cache first
     const Coin& coin = pcoinsTip->AccessCoin(txin.prevout);
     if (!coin.IsSpent()) {
@@ -119,7 +109,7 @@ bool CPivStake::CreateTxOuts(const CWallet* pwallet, std::vector<CTxOut>& vout, 
 
 CDataStream CPivStake::GetUniqueness() const
 {
-    //The unique identifier for a PIV stake is the outpoint
+    //The unique identifier for a XOS stake is the outpoint
     CDataStream ss(SER_NETWORK, 0);
     ss << outpointFrom.n << outpointFrom.hash;
     return ss;

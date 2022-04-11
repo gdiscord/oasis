@@ -1,0 +1,3 @@
+usr/local/bin/oasisd usr/bin
+usr/local/bin/oasis-cli usr/bin
+debian/examples/oasis.conf etc/oasis

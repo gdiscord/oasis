@@ -7,7 +7,6 @@
 #define BITCOIN_CONSENSUS_PARAMS_H
 
 #include "amount.h"
-#include "libzerocoin/Params.h"
 #include "optional.h"
 #include "uint256.h"
 #include <map>
@@ -27,16 +26,11 @@ enum UpgradeIndex : uint32_t {
     BASE_NETWORK,
     UPGRADE_POS,
     UPGRADE_POS_V2,
-    UPGRADE_ZC,
-    UPGRADE_ZC_V2,
     UPGRADE_BIP65,
-    UPGRADE_ZC_PUBLIC,
-    UPGRADE_V3_4,
+    UPGRADE_TIME_V2,
+    UPGRADE_MESG_V2,
     UPGRADE_V4_0,
-    UPGRADE_V5_0,
-    UPGRADE_V5_2,
-    UPGRADE_V5_3,
-    UPGRADE_V6_0,
+    UPGRADE_VNEXT,
     UPGRADE_TESTDUMMY,
     // NOTE: Also add new upgrades to NetworkUpgradeInfo in upgrades.cpp
     MAX_NETWORK_UPGRADES
@@ -119,12 +113,6 @@ struct Params {
 
     // height-based activations
     int height_last_invalid_UTXO;
-    int height_last_ZC_AccumCheckpoint;
-    int height_last_ZC_WrappedSerials;
-
-    // validation by-pass
-    int64_t nPivxBadBlockTime;
-    unsigned int nPivxBadBlockBits;
 
     // Map with network updates
     NetworkUpgrade vUpgrades[MAX_NETWORK_UPGRADES];
@@ -132,7 +120,7 @@ struct Params {
     int64_t TargetTimespan(const bool fV2 = true) const { return fV2 ? nTargetTimespanV2 : nTargetTimespan; }
     uint256 ProofOfStakeLimit(const bool fV2) const { return fV2 ? posLimitV2 : posLimitV1; }
     bool MoneyRange(const CAmount& nValue) const { return (nValue >= 0 && nValue <= nMaxMoneyOut); }
-    bool IsTimeProtocolV2(const int nHeight) const { return NetworkUpgradeActive(nHeight, UPGRADE_V4_0); }
+    bool IsTimeProtocolV2(const int nHeight) const { return NetworkUpgradeActive(nHeight, UPGRADE_TIME_V2); }
 
     int FutureBlockTimeDrift(const int nHeight) const
     {
@@ -154,34 +142,10 @@ struct Params {
             const int utxoFromBlockHeight, const uint32_t utxoFromBlockTime) const
     {
         // before stake modifier V2, we require the utxo to be nStakeMinAge old
-        if (!NetworkUpgradeActive(contextHeight, Consensus::UPGRADE_V3_4))
+        if (!NetworkUpgradeActive(contextHeight, Consensus::UPGRADE_TIME_V2))
             return (utxoFromBlockTime + nStakeMinAge <= contextTime);
         // with stake modifier V2+, we require the utxo to be nStakeMinDepth deep in the chain
         return (contextHeight - utxoFromBlockHeight >= nStakeMinDepth);
-    }
-
-
-    /*
-     * (Legacy) Zerocoin consensus params
-     */
-    std::string ZC_Modulus;  // parsed in Zerocoin_Params (either as hex or dec string)
-    int ZC_MaxPublicSpendsPerTx;
-    int ZC_MaxSpendsPerTx;
-    int ZC_MinMintConfirmations;
-    CAmount ZC_MinMintFee;
-    int ZC_MinStakeDepth;
-    int ZC_TimeStart;
-    int ZC_HeightStart;
-
-    libzerocoin::ZerocoinParams* Zerocoin_Params(bool useModulusV1) const
-    {
-        static CBigNum bnHexModulus = 0;
-        if (!bnHexModulus) bnHexModulus.SetHex(ZC_Modulus);
-        static libzerocoin::ZerocoinParams ZCParamsHex = libzerocoin::ZerocoinParams(bnHexModulus);
-        static CBigNum bnDecModulus = 0;
-        if (!bnDecModulus) bnDecModulus.SetDec(ZC_Modulus);
-        static libzerocoin::ZerocoinParams ZCParamsDec = libzerocoin::ZerocoinParams(bnDecModulus);
-        return (useModulusV1 ? &ZCParamsHex : &ZCParamsDec);
     }
 
     /**

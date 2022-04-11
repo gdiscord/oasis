@@ -1,5 +1,6 @@
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -417,7 +418,7 @@ bool CMasternodeBroadcast::CheckAndUpdate(int& nDos)
 
     std::string strError = "";
     if (!CheckSignature()) {
-        // For now (till v6.0), let's be "naive" and not fully ban nodes when the node is syncing
+        // For now (till vNext), let's be "naive" and not fully ban nodes when the node is syncing
         // This could be a bad parsed BIP155 address that got stored on db on an old software version.
         nDos = masternodeSync.IsSynced() ? 100 : 5;
         return error("%s : Got bad Masternode address signature", __func__);

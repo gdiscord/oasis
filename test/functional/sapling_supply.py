@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2020 The PIVX developers
+# Copyright (c) 2020 The OASIS developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or https://www.opensource.org/licenses/mit-license.php .
 
@@ -38,8 +38,8 @@ class SaplingSupplyTest(PivxTestFramework):
         z_supply = 0
         self.check_shield_supply(z_supply)
 
-        # Send 200 PIV to shield addr1
-        self.log.info("Shielding 200 PIV...")
+        # Send 200 XOS to shield addr1
+        self.log.info("Shielding 200 XOS...")
         z_addr1 = self.nodes[0].getnewshieldaddress()
         txid = self.nodes[0].shieldsendmany(
             "from_transparent", [{'address': z_addr1, 'amount': 200,
@@ -65,7 +65,7 @@ class SaplingSupplyTest(PivxTestFramework):
         self.check_shield_supply(z_supply)
 
         # Deshield 100 coins
-        self.log.info("Deshielding 100 PIV...")
+        self.log.info("Deshielding 100 XOS...")
         t_addr1 = self.nodes[0].getnewaddress()
         txid = self.nodes[0].shieldsendmany(
             "from_shield", [{'address': t_addr1, 'amount': 100}], 1, fee)

@@ -1,11 +1,11 @@
 Sample configuration files for:
 ```
-SystemD: pivxd.service
-Upstart: pivxd.conf
-OpenRC:  pivxd.openrc
-         pivxd.openrcconf
-CentOS:  pivxd.init
-macOS:    org.pivx.pivxd.plist
+SystemD: oasisd.service
+Upstart: oasisd.conf
+OpenRC:  oasisd.openrc
+         oasisd.openrcconf
+CentOS:  oasisd.init
+macOS:    org.oasis.oasisd.plist
 ```
 have been made available to assist packagers in creating node packages here.
 

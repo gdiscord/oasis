@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2020 The PIVX developers
+# Copyright (c) 2020 The OASIS developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or https://www.opensource.org/licenses/mit-license.php.
 """
@@ -201,7 +201,7 @@ class MasternodeGovernanceBasicTest(PivxTier2TestFramework):
         self.log.info("preparing budget proposal..")
         firstProposal = Proposal(
             "super-cool",
-            "https://forum.pivx.org/t/test-proposal",
+            "https://forum.oasis.org/t/test-proposal",
             2,
             self.miner.getnewaddress(),
             300

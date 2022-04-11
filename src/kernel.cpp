@@ -2,6 +2,7 @@
 // Copyright (c) 2013-2014 The NovaCoin Developers
 // Copyright (c) 2014-2018 The BlackCoin Developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,8 +16,6 @@
 #include "util/system.h"
 #include "utilmoneystr.h"
 #include "validation.h"
-#include "zpivchain.h"
-#include "zpiv/zpos.h"
 
 /**
  * CStakeKernel Constructor
@@ -33,7 +32,7 @@ CStakeKernel::CStakeKernel(const CBlockIndex* const pindexPrev, CStakeInput* sta
     stakeValue(stakeInput->GetValue())
 {
     // Set kernel stake modifier
-    if (!Params().GetConsensus().NetworkUpgradeActive(pindexPrev->nHeight + 1, Consensus::UPGRADE_V3_4)) {
+    if (!Params().GetConsensus().NetworkUpgradeActive(pindexPrev->nHeight + 1, Consensus::UPGRADE_TIME_V2)) {
         uint64_t nStakeModifier = 0;
         if (!GetOldStakeModifier(stakeInput, nStakeModifier))
             LogPrintf("%s : ERROR: Failed to get kernel stake modifier\n", __func__);
@@ -97,9 +96,7 @@ static bool LoadStakeInput(const CBlock& block, std::unique_ptr<CStakeInput>& st
 
     // Construct the stakeinput object
     const CTxIn& txin = block.vtx[1]->vin[0];
-    stake = txin.IsZerocoinSpend() ?
-            std::unique_ptr<CStakeInput>(CLegacyZPivStake::NewZPivStake(txin, nHeight)) :
-            std::unique_ptr<CStakeInput>(CPivStake::NewPivStake(txin, nHeight, block.nTime));
+    stake = std::unique_ptr<CStakeInput>(CPivStake::NewPivStake(txin, nHeight, block.nTime));
 
     return stake != nullptr;
 }
@@ -155,7 +152,7 @@ bool CheckProofOfStake(const CBlock& block, std::string& strError, const CBlockI
     }
 
     // zPoS disabled (ContextCheck) before blocks V7, and the tx input signature is in CoinSpend
-    if (stakeInput->IsZPIV()) return true;
+    if (stakeInput->IsZXOS()) return true;
 
     // Verify tx input signature
     CTxOut stakePrevout;

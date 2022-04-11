@@ -1,5 +1,6 @@
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -217,7 +218,7 @@ bool IsBlockValueValid(int nHeight, CAmount& nExpectedValue, CAmount nMinted, CA
         }
     }
 
-    if (nMinted < 0 && consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_V5_3)) {
+    if (nMinted < 0 && consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_V4_0)) {
         return false;
     }
 
@@ -235,7 +236,7 @@ bool IsBlockPayeeValid(const CBlock& block, const CBlockIndex* pindexPrev)
     }
 
     const bool fPayCoinstake = Params().GetConsensus().NetworkUpgradeActive(nBlockHeight, Consensus::UPGRADE_POS) &&
-                               !Params().GetConsensus().NetworkUpgradeActive(nBlockHeight, Consensus::UPGRADE_V6_0);
+                               !Params().GetConsensus().NetworkUpgradeActive(nBlockHeight, Consensus::UPGRADE_VNEXT);
     const CTransaction& txNew = *(fPayCoinstake ? block.vtx[1] : block.vtx[0]);
 
     //check if it's a budget block
@@ -365,9 +366,9 @@ void CMasternodePayments::FillBlockPayee(CMutableTransaction& txCoinbase, CMutab
         return;
     }
 
-    // Starting from PIVX v6.0 masternode and budgets are paid in the coinbase tx
+    // Starting from OASIS_vNext masternode and budgets are paid in the coinbase tx
     const int nHeight = pindexPrev->nHeight + 1;
-    bool fPayCoinstake = fProofOfStake && !Params().GetConsensus().NetworkUpgradeActive(nHeight, Consensus::UPGRADE_V6_0);
+    bool fPayCoinstake = fProofOfStake && !Params().GetConsensus().NetworkUpgradeActive(nHeight, Consensus::UPGRADE_VNEXT);
 
     // if PoS block pays the coinbase, clear it first
     if (fProofOfStake && !fPayCoinstake) txCoinbase.vout.clear();

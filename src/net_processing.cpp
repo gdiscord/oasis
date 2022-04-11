@@ -1,6 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2016 The Bitcoin Core developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -1248,19 +1249,19 @@ bool static ProcessMessage(CNode* pfrom, std::string strCommand, CDataStream& vR
             pfrom->fDisconnect = true;
         }
 
-        // PIVX: We use certain sporks during IBD, so check to see if they are
+        // OASIS: We use certain sporks during IBD, so check to see if they are
         // available. If not, ask the first peer connected for them.
         // TODO: Move this to an instant broadcast of the sporks.
         bool fMissingSporks = !pSporkDB->SporkExists(SPORK_14_NEW_PROTOCOL_ENFORCEMENT) ||
                               !pSporkDB->SporkExists(SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2) ||
-                              !pSporkDB->SporkExists(SPORK_19_COLDSTAKING_MAINTENANCE) ||
+                              !pSporkDB->SporkExists(SPORK_18_COLDSTAKING_MAINTENANCE) ||
                               !pSporkDB->SporkExists(SPORK_20_SAPLING_MAINTENANCE);
 
         if (fMissingSporks || !fRequestedSporksIDB){
             LogPrintf("asking peer for sporks\n");
             connman->PushMessage(pfrom, CNetMsgMaker(nSendVersion).Make(NetMsgType::GETSPORKS));
             fRequestedSporksIDB = true;
-        }
+        } 
 
         return true;
     }
@@ -1522,12 +1523,6 @@ bool static ProcessMessage(CNode* pfrom, std::string strCommand, CDataStream& vR
 
         pfrom->setAskFor.erase(inv.hash);
         mapAlreadyAskedFor.erase(inv);
-
-        if (ptx->ContainsZerocoins()) {
-            // Don't even try to check zerocoins at all.
-            Misbehaving(pfrom->GetId(), 100, strprintf("received a zc transaction"));
-            return false;
-        }
 
         if (AcceptToMemoryPool(mempool, state, ptx, true, &fMissingInputs, false, ignoreFees)) {
             mempool.check(pcoinsTip.get());

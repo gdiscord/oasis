@@ -1,4 +1,4 @@
-// Copyright (c) 2021 The PIVX Core developers
+// Copyright (c) 2021 The OASIS Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
@@ -104,7 +104,6 @@ static void initBasics()
     threadGroup.create_thread(std::bind(&TraceThread<CScheduler::Function>, "scheduler", serviceLoop));
     GetMainSignals().RegisterBackgroundSignalScheduler(scheduler);
 
-    zerocoinDB.reset(new CZerocoinDB(0, true));
     pSporkDB.reset(new CSporkDB(0, true));
     pblocktree.reset(new CBlockTreeDB(1 << 20, true));
     pcoinsdbview.reset(new CCoinsViewDB(1 << 23, true));
@@ -122,7 +121,7 @@ static void WalletProcessBlockBench(benchmark::State& state)
     SelectParams(CBaseChainParams::REGTEST);
     UpdateNetworkUpgradeParameters(Consensus::UPGRADE_POS, Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT);
     UpdateNetworkUpgradeParameters(Consensus::UPGRADE_POS_V2, Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT);
-    UpdateNetworkUpgradeParameters(Consensus::UPGRADE_V5_0, 1);
+    UpdateNetworkUpgradeParameters(Consensus::UPGRADE_V4_0, 1);
     const auto& params = Params();
     initBasics();
 
@@ -203,7 +202,6 @@ static void WalletProcessBlockBench(benchmark::State& state)
     pcoinsTip.reset();
     pcoinsdbview.reset();
     pblocktree.reset();
-    zerocoinDB.reset();
     pSporkDB.reset();
 }
 

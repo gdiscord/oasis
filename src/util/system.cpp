@@ -2,11 +2,12 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/pivx-config.h"
+#include "config/oasis-config.h"
 #endif
 
 #include "util/system.h"
@@ -78,12 +79,12 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-const char * const PIVX_CONF_FILENAME = "pivx.conf";
-const char * const PIVX_PID_FILENAME = "pivx.pid";
-const char * const PIVX_MASTERNODE_CONF_FILENAME = "masternode.conf";
+const char * const OASIS_CONF_FILENAME = "oasis.conf";
+const char * const OASIS_PID_FILENAME = "oasis.pid";
+const char * const OASIS_MASTERNODE_CONF_FILENAME = "masternode.conf";
+const char * const FORGE_CONF_FILENAME = "forge.conf";
 
-
-// PIVX only features
+// OASIS only features
 // Masternode
 std::atomic<bool> fMasterNode{false};
 bool fLiteMode = false;
@@ -232,7 +233,7 @@ public:
         std::pair<bool,std::string> found_result(false, std::string());
 
         // We pass "true" to GetArgHelper in order to return the last
-        // argument value seen from the command line (so "pivxd -foo=bar
+        // argument value seen from the command line (so "oasisd -foo=bar
         // -foo=baz" gives GetArg(am,"foo")=={true,"baz"}
         found_result = GetArgHelper(am.m_override_args, arg, true);
         if (found_result.first) {
@@ -515,7 +516,7 @@ static std::string FormatException(const std::exception* pex, const char* pszThr
     char pszModule[MAX_PATH] = "";
     GetModuleFileNameA(NULL, pszModule, sizeof(pszModule));
 #else
-    const char* pszModule = "pivx";
+    const char* pszModule = "oasis";
 #endif
     if (pex)
         return strprintf(
@@ -534,13 +535,13 @@ void PrintExceptionContinue(const std::exception* pex, const char* pszThread)
 
 fs::path GetDefaultDataDir()
 {
-// Windows < Vista: C:\Documents and Settings\Username\Application Data\PIVX
-// Windows >= Vista: C:\Users\Username\AppData\Roaming\PIVX
-// Mac: ~/Library/Application Support/PIVX
-// Unix: ~/.pivx
+// Windows < Vista: C:\Documents and Settings\Username\Application Data\OASIS
+// Windows >= Vista: C:\Users\Username\AppData\Roaming\OASIS
+// Mac: ~/Library/Application Support/OASIS
+// Unix: ~/.oasis
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "PIVX";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "OASIS";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -552,10 +553,10 @@ fs::path GetDefaultDataDir()
     // Mac
     pathRet /= "Library/Application Support";
     TryCreateDirectories(pathRet);
-    return pathRet / "PIVX";
+    return pathRet / "OASIS";
 #else
     // Unix
-    return pathRet / ".pivx";
+    return pathRet / ".oasis";
 #endif
 #endif
 }
@@ -569,13 +570,13 @@ static RecursiveMutex csPathCached;
 static fs::path ZC_GetBaseParamsDir()
 {
     // Copied from GetDefaultDataDir and adapter for zcash params.
-    // Windows < Vista: C:\Documents and Settings\Username\Application Data\PIVXParams
-    // Windows >= Vista: C:\Users\Username\AppData\Roaming\PIVXParams
-    // Mac: ~/Library/Application Support/PIVXParams
-    // Unix: ~/.pivx-params
+    // Windows < Vista: C:\Documents and Settings\Username\Application Data\OASISParams
+    // Windows >= Vista: C:\Users\Username\AppData\Roaming\OASISParams
+    // Mac: ~/Library/Application Support/OASISParams
+    // Unix: ~/.oasis-params
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "PIVXParams";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "OASISParams";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -587,10 +588,10 @@ static fs::path ZC_GetBaseParamsDir()
     // Mac
     pathRet /= "Library/Application Support";
     TryCreateDirectories(pathRet);
-    return pathRet / "PIVXParams";
+    return pathRet / "OASISParams";
 #else
     // Unix
-    return pathRet / ".pivx-params";
+    return pathRet / ".oasis-params";
 #endif
 #endif
 }
@@ -656,14 +657,14 @@ void initZKSNARKS()
         CFRelease(mainBundle);
 #else
         // Linux fallback path for debuild/ppa based installs
-        sapling_spend = "/usr/share/pivx/sapling-spend.params";
-        sapling_output = "/usr/share/pivx/sapling-output.params";
+        sapling_spend = "/usr/share/oasis/sapling-spend.params";
+        sapling_output = "/usr/share/oasis/sapling-output.params";
         if (fs::exists(sapling_spend) && fs::exists(sapling_output)) {
             fParamsFound = true;
         } else {
             // Linux fallback for local installs
-            sapling_spend = "/usr/local/share/pivx/sapling-spend.params";
-            sapling_output = "/usr/local/share/pivx/sapling-output.params";
+            sapling_spend = "/usr/local/share/oasis/sapling-spend.params";
+            sapling_output = "/usr/local/share/oasis/sapling-output.params";
         }
 #endif
         if (fs::exists(sapling_spend) && fs::exists(sapling_output))
@@ -771,7 +772,13 @@ fs::path GetConfigFile(const std::string& confPath)
 
 fs::path GetMasternodeConfigFile()
 {
-    fs::path pathConfigFile(gArgs.GetArg("-mnconf", PIVX_MASTERNODE_CONF_FILENAME));
+    fs::path pathConfigFile(gArgs.GetArg("-mnconf", OASIS_MASTERNODE_CONF_FILENAME));
+    return AbsPathForConfigVal(pathConfigFile);
+}
+
+fs::path GetForgeConfigFile()
+{
+    fs::path pathConfigFile(gArgs.GetArg("-forgeconf", FORGE_CONF_FILENAME));
     return AbsPathForConfigVal(pathConfigFile);
 }
 
@@ -871,7 +878,7 @@ std::string ArgsManager::GetChainName() const
 #ifndef WIN32
 fs::path GetPidFile()
 {
-    fs::path pathPidFile(gArgs.GetArg("-pid", PIVX_PID_FILENAME));
+    fs::path pathPidFile(gArgs.GetArg("-pid", OASIS_PID_FILENAME));
     return AbsPathForConfigVal(pathPidFile);
 }
 

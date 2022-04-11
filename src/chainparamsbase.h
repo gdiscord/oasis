@@ -1,17 +1,17 @@
 // Copyright (c) 2014-2021 The Bitcoin developers
-// Copyright (c) 2017-2021 The PIVX developers
+// Copyright (c) 2017-2021 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef PIVX_CHAINPARAMSBASE_H
-#define PIVX_CHAINPARAMSBASE_H
+#ifndef OASIS_CHAINPARAMSBASE_H
+#define OASIS_CHAINPARAMSBASE_H
 
 #include <memory>
 #include <string>
 #include <vector>
 
 /**
- * CBaseChainParams defines the base parameters (shared between pivx-cli and pivxd)
+ * CBaseChainParams defines the base parameters (shared between oasis-cli and oasisd)
  * of a given instance of the Pivx system.
  */
 class CBaseChainParams
@@ -63,4 +63,4 @@ void SelectBaseParams(const std::string& chain);
  */
 std::string ChainNameFromCommandLine();
 
-#endif // PIVX_CHAINPARAMSBASE_H
+#endif // OASIS_CHAINPARAMSBASE_H

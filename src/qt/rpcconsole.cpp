@@ -1,6 +1,7 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -257,8 +258,9 @@ void RPCConsole::setClientModel(ClientModel* model)
         showOrHideBanTableIfRequired();
 
         // Provide initial values
-        ui->clientVersion->setText(model->formatFullVersion());
+        ui->clientVersion->setText(model->formatFullVersionWithCodename());
         ui->clientName->setText(model->clientName());
+        ui->startupTime->setText(model->formatBuildDate());
         ui->dataDir->setText(model->dataDir());
         ui->startupTime->setText(model->formatClientStartupTime());
         ui->networkName->setText(QString::fromStdString(Params().NetworkIDString()));
@@ -403,7 +405,7 @@ void RPCConsole::clear()
     QString clsKey = "Ctrl-L";
 #endif
 
-    message(RPCExecutor::CMD_REPLY, (tr("Welcome to the PIVX RPC console.") + "<br>" +
+    message(RPCExecutor::CMD_REPLY, (tr("Welcome to the OASIS RPC console.") + "<br>" +
                         tr("Use up and down arrows to navigate history, and %1 to clear screen.").arg("<b>"+clsKey+"</b>") + "<br>" +
                         tr("Type %1 for an overview of available commands.").arg("<b>help</b>") + "<br>" +
                         tr("For more information on using this console type %1.").arg("<b>help-console</b>") +

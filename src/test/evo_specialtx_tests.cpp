@@ -1,8 +1,8 @@
-// Copyright (c) 2021 The PIVX developers
+// Copyright (c) 2021 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
-#include "test/test_pivx.h"
+#include "test/test_oasis.h"
 #include "primitives/transaction.h"
 #include "evo/providertx.h"
 #include "evo/specialtx.h"

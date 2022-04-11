@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2016-2020 The PIVX developers
+// Copyright (c) 2016-2020 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -31,7 +31,6 @@ CTxMemPoolEntry::CTxMemPoolEntry(const CTransactionRef& _tx, const CAmount& _nFe
 {
     nTxSize = ::GetSerializeSize(*_tx, PROTOCOL_VERSION);
     nUsageSize = _tx->DynamicMemoryUsage();
-    hasZerocoins = _tx->ContainsZerocoins();
     m_isShielded = _tx->IsShieldedTx();
 
     nCountWithDescendants = 1;
@@ -438,11 +437,9 @@ bool CTxMemPool::addUnchecked(const uint256& hash, const CTxMemPoolEntry &entry,
 
     const CTransaction& tx = newit->GetTx();
     std::set<uint256> setParentTransactions;
-    if(!tx.HasZerocoinSpendInputs()) {
-        for (unsigned int i = 0; i < tx.vin.size(); i++) {
-            mapNextTx.insert(std::make_pair(&tx.vin[i].prevout, newit->GetSharedTx()));
-            setParentTransactions.insert(tx.vin[i].prevout.hash);
-        }
+    for (unsigned int i = 0; i < tx.vin.size(); i++) {
+        mapNextTx.insert(std::make_pair(&tx.vin[i].prevout, newit->GetSharedTx()));
+        setParentTransactions.insert(tx.vin[i].prevout.hash);
     }
     // Don't bother worrying about child transactions of this one.
     // Normal case of a new transaction arriving is that there can't be any
@@ -1286,8 +1283,6 @@ bool CTxMemPool::nullifierExists(const uint256& nullifier) const
 
 bool CTxMemPool::HasNoInputsOf(const CTransaction &tx) const
 {
-    if (tx.HasZerocoinSpendInputs())
-        return true;
     for (unsigned int i = 0; i < tx.vin.size(); i++)
         if (exists(tx.vin[i].prevout.hash))
             return false;

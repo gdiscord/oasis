@@ -4,6 +4,7 @@
 // Copyright (c) 2013-2014 The NovaCoin Developers
 // Copyright (c) 2014-2018 The BlackCoin Developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -18,7 +19,6 @@
 #include "tinyformat.h"
 #include "uint256.h"
 #include "util/system.h"
-#include "libzerocoin/Denominations.h"
 
 #include <vector>
 
@@ -196,7 +196,6 @@ public:
     uint32_t nTime{0};
     uint32_t nBits{0};
     uint32_t nNonce{0};
-    uint256 nAccumulatorCheckpoint{};
 
     //! (memory only) Sequential id assigned to distinguish order in which blocks are received.
     uint32_t nSequenceId{0};
@@ -256,9 +255,9 @@ const CBlockIndex* LastCommonAncestor(const CBlockIndex* pa, const CBlockIndex* 
 
 /** Used to marshal pointers into hashes for db storage. */
 
-// New serialization introduced with 4.0.99
-static const int DBI_OLD_SER_VERSION = 4009900;
-static const int DBI_SER_VERSION_NO_ZC = 4009902;   // removes mapZerocoinSupply, nMoneySupply
+// New serialization introduced with v3.0.0 "Leap"
+static const int DBI_OLD_SER_VERSION_V3 = 3000000; //3000000;
+static const int DBI_SER_VERSION_NO_ZC  = 4000000; //4000000;   // removes mapZerocoinSupply, nMoneySupply
 
 class CDiskBlockIndex : public CBlockIndex
 {
@@ -288,7 +287,7 @@ public:
         if (obj.nStatus & BLOCK_HAVE_UNDO) READWRITE(VARINT(obj.nUndoPos));
 
         if (nSerVersion >= DBI_SER_VERSION_NO_ZC) {
-            // Serialization with CLIENT_VERSION = 4009902+
+            // Serialization with CLIENT_VERSION = 4000000+
             READWRITE(obj.nFlags);
             READWRITE(obj.nVersion);
             READWRITE(obj.vStakeModifier);
@@ -297,40 +296,21 @@ public:
             READWRITE(obj.nTime);
             READWRITE(obj.nBits);
             READWRITE(obj.nNonce);
-            if(obj.nVersion > 3 && obj.nVersion < 7)
-                READWRITE(obj.nAccumulatorCheckpoint);
 
             // Sapling blocks
-            if (obj.nVersion >= 8) {
+            if (obj.nVersion >= 6) {
                 READWRITE(obj.hashFinalSaplingRoot);
                 READWRITE(obj.nSaplingValue);
-            }
-        } else if (nSerVersion > DBI_OLD_SER_VERSION && ser_action.ForRead()) {
-            // Serialization with CLIENT_VERSION = 4009901
-            std::map<libzerocoin::CoinDenomination, int64_t> mapZerocoinSupply;
-            int64_t nMoneySupply = 0;
-            READWRITE(nMoneySupply);
-            READWRITE(obj.nFlags);
-            READWRITE(obj.nVersion);
-            READWRITE(obj.vStakeModifier);
-            READWRITE(obj.hashPrev);
-            READWRITE(obj.hashMerkleRoot);
-            READWRITE(obj.nTime);
-            READWRITE(obj.nBits);
-            READWRITE(obj.nNonce);
-            if (obj.nVersion > 3) {
-                READWRITE(mapZerocoinSupply);
-                if (obj.nVersion < 7) READWRITE(obj.nAccumulatorCheckpoint);
-            }
+            }        
         } else if (ser_action.ForRead()) {
-            // Serialization with CLIENT_VERSION = 4009900-
+            // Serialization with CLIENT_VERSION = 3000000-
             int64_t nMint = 0;
             uint256 hashNext{};
             int64_t nMoneySupply = 0;
             READWRITE(nMint);
-            READWRITE(nMoneySupply);
+            READWRITE(nMoneySupply);          
             READWRITE(obj.nFlags);
-            if (!Params().GetConsensus().NetworkUpgradeActive(obj.nHeight, Consensus::UPGRADE_V3_4)) {
+            if (!Params().GetConsensus().NetworkUpgradeActive(obj.nHeight, Consensus::UPGRADE_TIME_V2)) {
                 uint64_t nStakeModifier = 0;
                 READWRITE(nStakeModifier);
                 SER_READ(obj, obj.SetStakeModifier(nStakeModifier, obj.GeneratedStakeModifier()));
@@ -352,13 +332,6 @@ public:
             READWRITE(obj.nTime);
             READWRITE(obj.nBits);
             READWRITE(obj.nNonce);
-            if (obj.nVersion > 3) {
-                std::map<libzerocoin::CoinDenomination, int64_t> mapZerocoinSupply;
-                std::vector<libzerocoin::CoinDenomination> vMintDenominationsInBlock;
-                READWRITE(obj.nAccumulatorCheckpoint);
-                READWRITE(mapZerocoinSupply);
-                READWRITE(vMintDenominationsInBlock);
-            }
         }
     }
 
@@ -371,9 +344,7 @@ public:
         block.nTime = nTime;
         block.nBits = nBits;
         block.nNonce = nNonce;
-        if (nVersion > 3 && nVersion < 7)
-            block.nAccumulatorCheckpoint = nAccumulatorCheckpoint;
-        if (nVersion >= 8)
+        if (nVersion >= 6)
             block.hashFinalSaplingRoot = hashFinalSaplingRoot;
         return block.GetHash();
     }

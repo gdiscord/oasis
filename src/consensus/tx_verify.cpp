@@ -6,7 +6,6 @@
 
 #include "consensus/consensus.h"
 #include "evo/specialtx.h"
-#include "consensus/zerocoin_verify.h"
 #include "sapling/sapling_validation.h"
 #include "../validation.h"
 
@@ -39,7 +38,7 @@ unsigned int GetLegacySigOpCount(const CTransaction& tx)
 
 unsigned int GetP2SHSigOpCount(const CTransaction& tx, const CCoinsViewCache& inputs)
 {
-    if (tx.IsCoinBase() || tx.HasZerocoinSpendInputs())
+    if (tx.IsCoinBase())
         // a tx containing a zc spend can have only zc inputs
         return 0;
 
@@ -71,8 +70,7 @@ bool CheckTransaction(const CTransaction& tx, CValidationState& state, bool fCol
 
     // Size limits
     static_assert(MAX_BLOCK_SIZE_CURRENT >= MAX_TX_SIZE_AFTER_SAPLING, "Max block size must be bigger than max TX size");    // sanity
-    static_assert(MAX_TX_SIZE_AFTER_SAPLING > MAX_ZEROCOIN_TX_SIZE, "New max TX size must be bigger than old max TX size");  // sanity
-    const unsigned int nMaxSize = tx.IsShieldedTx() ? MAX_TX_SIZE_AFTER_SAPLING : MAX_ZEROCOIN_TX_SIZE;
+    const unsigned int nMaxSize = MAX_TX_SIZE_AFTER_SAPLING;
     if (tx.GetTotalSize() > nMaxSize) {
         return state.DoS(10, error("tx oversize: %d > %d", tx.GetTotalSize(), nMaxSize), REJECT_INVALID, "bad-txns-oversize");
     }
@@ -109,9 +107,7 @@ bool CheckTransaction(const CTransaction& tx, CValidationState& state, bool fCol
         // Check for duplicate inputs
         if (vInOutPoints.count(txin.prevout))
             return state.DoS(100, false, REJECT_INVALID, "bad-txns-inputs-duplicate");
-        if (!txin.IsZerocoinSpend()) {
             vInOutPoints.insert(txin.prevout);
-        }
     }
 
     if (tx.IsCoinBase()) {
@@ -119,7 +115,7 @@ bool CheckTransaction(const CTransaction& tx, CValidationState& state, bool fCol
             return state.DoS(100, false, REJECT_INVALID, "bad-cb-length");
     } else {
         for (const CTxIn& txin : tx.vin)
-            if (txin.prevout.IsNull() && !txin.IsZerocoinSpend())
+            if (txin.prevout.IsNull())
                 return state.DoS(10, false, REJECT_INVALID, "bad-txns-prevout-null");
     }
 
@@ -132,11 +128,5 @@ bool ContextualCheckTransaction(const CTransactionRef& tx, CValidationState& sta
     if (!SaplingValidation::ContextualCheckTransaction(*tx, state, chainparams, nHeight, isMined, fIBD)) {
         return false; // Failure reason has been set in validation state object
     }
-
-    // Dispatch to ZerocoinTx validator
-    if (!ContextualCheckZerocoinTx(tx, state, chainparams.GetConsensus(), nHeight, isMined)) {
-        return false; // Failure reason has been set in validation state object
-    }
-
     return true;
 }

@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2015-2021 The PIVX developers
+// Copyright (c) 2015-2021 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
@@ -40,25 +40,12 @@ CTxIn::CTxIn(uint256 hashPrevTx, uint32_t nOut, CScript scriptSigIn, uint32_t nS
     nSequence = nSequenceIn;
 }
 
-bool CTxIn::IsZerocoinSpend() const
-{
-    return prevout.hash.IsNull() && scriptSig.IsZerocoinSpend();
-}
-
-bool CTxIn::IsZerocoinPublicSpend() const
-{
-    return scriptSig.IsZerocoinPublicSpend();
-}
-
 std::string CTxIn::ToString() const
 {
     std::string str;
     str += "CTxIn(";
     str += prevout.ToString();
     if (prevout.IsNull())
-        if(IsZerocoinSpend())
-            str += strprintf(", zerocoinspend %s...", HexStr(scriptSig).substr(0, 25));
-        else
             str += strprintf(", coinbase %s", HexStr(scriptSig));
     else
         str += strprintf(", scriptSig=%s", HexStr(scriptSig).substr(0, 24));
@@ -80,10 +67,6 @@ uint256 CTxOut::GetHash() const
     return SerializeHash(*this);
 }
 
-bool CTxOut::IsZerocoinMint() const
-{
-    return scriptPubKey.IsZerocoinMint();
-}
 
 std::string CTxOut::ToString() const
 {
@@ -113,33 +96,11 @@ CTransaction::CTransaction() : vin(), vout(), nVersion(CTransaction::CURRENT_VER
 CTransaction::CTransaction(const CMutableTransaction &tx) : vin(tx.vin), vout(tx.vout), nVersion(tx.nVersion), nType(tx.nType), nLockTime(tx.nLockTime), sapData(tx.sapData), extraPayload(tx.extraPayload), hash(ComputeHash()) {}
 CTransaction::CTransaction(CMutableTransaction &&tx) : vin(std::move(tx.vin)), vout(std::move(tx.vout)), nVersion(tx.nVersion), nType(tx.nType), nLockTime(tx.nLockTime), sapData(tx.sapData), extraPayload(tx.extraPayload), hash(ComputeHash()) {}
 
-bool CTransaction::HasZerocoinSpendInputs() const
-{
-    for (const CTxIn& txin: vin) {
-        if (txin.IsZerocoinSpend() || txin.IsZerocoinPublicSpend())
-            return true;
-    }
-    return false;
-}
-
-bool CTransaction::HasZerocoinMintOutputs() const
-{
-    for(const CTxOut& txout : vout) {
-        if (txout.IsZerocoinMint())
-            return true;
-    }
-    return false;
-}
 
 bool CTransaction::IsCoinStake() const
 {
     if (vin.empty())
         return false;
-
-    bool fAllowNull = vin[0].IsZerocoinSpend();
-    if (vin[0].prevout.IsNull() && !fAllowNull)
-        return false;
-
     return (vout.size() >= 2 && vout[0].IsEmpty());
 }
 
@@ -156,7 +117,7 @@ CAmount CTransaction::GetValueOut() const
 {
     CAmount nValueOut = 0;
     for (const CTxOut& out : vout) {
-        // PIVX: previously MoneyRange() was called here. This has been replaced with negative check and boundary wrap check.
+        // OASIS: previously MoneyRange() was called here. This has been replaced with negative check and boundary wrap check.
         if (out.nValue < 0)
             throw std::runtime_error("CTransaction::GetValueOut() : value out of range : less than 0");
 

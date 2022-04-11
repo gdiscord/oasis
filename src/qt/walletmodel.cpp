@@ -1,6 +1,7 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -92,7 +93,7 @@ bool WalletModel::isShutdownRequested()
 
 bool WalletModel::isColdStakingNetworkelyEnabled() const
 {
-    return !sporkManager.IsSporkActive(SPORK_19_COLDSTAKING_MAINTENANCE);
+    return !sporkManager.IsSporkActive(SPORK_18_COLDSTAKING_MAINTENANCE);
 }
 
 bool WalletModel::isSaplingInMaintenance() const
@@ -100,9 +101,9 @@ bool WalletModel::isSaplingInMaintenance() const
     return sporkManager.IsSporkActive(SPORK_20_SAPLING_MAINTENANCE);
 }
 
-bool WalletModel::isV6Enforced() const
+bool WalletModel::isVNextEnforced() const
 {
-    return Params().GetConsensus().NetworkUpgradeActive(cachedNumBlocks, Consensus::UPGRADE_V6_0);
+    return Params().GetConsensus().NetworkUpgradeActive(cachedNumBlocks, Consensus::UPGRADE_VNEXT);
 }
 
 bool WalletModel::isStakingStatusActive() const
@@ -189,6 +190,11 @@ bool WalletModel::isColdStaking() const
 {
     // TODO: Complete me..
     return false;
+}
+
+int WalletModel::getPriceUSD() const
+{
+    return sporkManager.GetSporkValue(SPORK_19_PRICE_USD);
 }
 
 void WalletModel::getAvailableP2CSCoins(std::vector<COutput>& vCoins) const
@@ -473,7 +479,7 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
 
     // Pre-check input data for validity
     for (const SendCoinsRecipient& rcp : recipients) {
-        { // User-entered pivx address / amount:
+        { // User-entered oasis address / amount:
             if (!validateAddress(rcp.address, rcp.isP2CS)) {
                 return InvalidAddress;
             }
@@ -503,7 +509,7 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
                     return InvalidAddress;
                 }
 
-                scriptPubKey = isV6Enforced() ? GetScriptForStakeDelegation(*stakerId, *ownerId)
+                scriptPubKey = isVNextEnforced() ? GetScriptForStakeDelegation(*stakerId, *ownerId)
                                               : GetScriptForStakeDelegationLOF(*stakerId, *ownerId);
             } else {
                 // Regular P2PK or P2PKH
@@ -662,7 +668,7 @@ OperationResult WalletModel::createAndSendProposalFeeTx(CBudgetProposal& proposa
     CTransactionRef wtx;
     const uint256& nHash = proposal.GetHash();
     CReserveKey keyChange(wallet);
-    if (!wallet->CreateBudgetFeeTX(wtx, nHash, keyChange, false)) { // 50 PIV collateral for proposal
+    if (!wallet->CreateBudgetFeeTX(wtx, nHash, keyChange, false)) { // 50 XOS collateral for proposal
         return {false , "Error making fee transaction for proposal. Please check your wallet balance."};
     }
 
@@ -995,7 +1001,7 @@ bool WalletModel::updateAddressBookPurpose(const QString &addressStr, const std:
     bool isStaking = false;
     CTxDestination address = DecodeDestination(addressStr.toStdString(), isStaking);
     if (isStaking)
-        return error("Invalid PIVX address, cold staking address");
+        return error("Invalid OASIS address, cold staking address");
     CKeyID keyID;
     if (!getKeyId(address, keyID))
         return false;
@@ -1005,11 +1011,11 @@ bool WalletModel::updateAddressBookPurpose(const QString &addressStr, const std:
 bool WalletModel::getKeyId(const CTxDestination& address, CKeyID& keyID)
 {
     if (!IsValidDestination(address))
-        return error("Invalid PIVX address");
+        return error("Invalid OASIS address");
 
     const CKeyID* inKeyID = boost::get<CKeyID>(&address);
     if (!inKeyID)
-        return error("Unable to get KeyID from PIVX address");
+        return error("Unable to get KeyID from OASIS address");
 
     keyID = *inKeyID;
     return true;
@@ -1033,7 +1039,7 @@ QString WalletModel::getSaplingAddressString(const CWalletTx* wtx, const Sapling
     return ret.left(18) + "..." + ret.right(18);
 }
 
-// returns a COutPoint of 10000 PIV if found
+// returns a COutPoint of 40000 XOS if found
 bool WalletModel::getMNCollateralCandidate(COutPoint& outPoint)
 {
     CWallet::AvailableCoinsFilter coinsFilter;

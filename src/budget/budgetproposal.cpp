@@ -1,5 +1,6 @@
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -89,7 +90,7 @@ bool CBudgetProposal::IsHeavilyDownvoted(bool fNewRules)
 bool CBudgetProposal::CheckStartEnd()
 {
     // !TODO: remove (and always use new rules) when all proposals submitted before v5 enforcement are expired.
-    bool fNewRules = Params().GetConsensus().NetworkUpgradeActive(nBlockStart, Consensus::UPGRADE_V5_0);
+    bool fNewRules = Params().GetConsensus().NetworkUpgradeActive(nBlockStart, Consensus::UPGRADE_V4_0);
 
     if (nBlockStart < 0 ||
             // block start must be a superblock
@@ -171,7 +172,7 @@ bool CBudgetProposal::UpdateValid(int nCurrentHeight)
     fValid = false;
 
     // !TODO: remove after v5 enforcement and use fixed multiplier (3)
-    bool fNewRules = Params().GetConsensus().NetworkUpgradeActive(nCurrentHeight, Consensus::UPGRADE_V5_0);
+    bool fNewRules = Params().GetConsensus().NetworkUpgradeActive(nCurrentHeight, Consensus::UPGRADE_V4_0);
 
     // Never kill a proposal before the first superblock
     if (!fNewRules || nCurrentHeight > nBlockStart) {

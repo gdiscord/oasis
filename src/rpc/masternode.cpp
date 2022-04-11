@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -156,7 +157,7 @@ UniValue listmasternodes(const JSONRPCRequest& request)
             "    \"outidx\": n,                           (numeric) Collateral transaction output index\n"
             "    \"pubkey\": \"key\",                     (string) Masternode public key used for message broadcasting\n"
             "    \"status\": s,                           (string) Status (ENABLED/EXPIRED/REMOVE/etc)\n"
-            "    \"addr\": \"addr\",                      (string) Masternode PIVX address\n"
+            "    \"addr\": \"addr\",                      (string) Masternode OASIS address\n"
             "    \"version\": v,                          (numeric) Masternode protocol version\n"
             "    \"lastseen\": ttt,     (numeric) The time in seconds since epoch (Jan 1 1970 GMT) of the last seen\n"
             "    \"activetime\": ttt,   (numeric) The time in seconds since epoch (Jan 1 1970 GMT) masternode has been active\n"
@@ -385,6 +386,32 @@ void SerializeMNB(UniValue& statusObjRet, const CMasternodeBroadcast& mnb, const
 {
     int successful = 0, failed = 0;
     return SerializeMNB(statusObjRet, mnb, fSuccess, successful, failed);
+}
+
+UniValue reloadmasternodeconfig (const JSONRPCRequest& request)
+{
+    if (request.fHelp)
+        throw std::runtime_error("Hot-reloads the masternode.conf file, adding and/or removing masternodes from the wallet at runtime.");
+
+    UniValue retObj(UniValue::VOBJ);
+
+    // Remember the previous MN count (for comparison)
+    int prevCount = masternodeConfig.getCount();
+    // Clear the loaded config
+    masternodeConfig.clear();
+    // Load from disk
+    std::string error;
+    if (!masternodeConfig.read(error)) {
+        // Failed
+        retObj.pushKV("success", false);
+        retObj.pushKV("message", "Error reloading masternode.conf, " + error);
+    } else {
+        // Success
+        retObj.pushKV("success", true);
+        retObj.pushKV("message", "Successfully reloaded from the masternode.conf file (Prev nodes: " + std::to_string(prevCount+1) + ", New nodes: " + std::to_string(masternodeConfig.getCount()+1) + ")");
+    }
+
+    return retObj;
 }
 
 UniValue startmasternode(const JSONRPCRequest& request)
@@ -673,7 +700,7 @@ UniValue getmasternodestatus(const JSONRPCRequest& request)
             "  \"txhash\": \"xxxx\",      (string) Collateral transaction hash\n"
             "  \"outputidx\": n,          (numeric) Collateral transaction output index number\n"
             "  \"netaddr\": \"xxxx\",     (string) Masternode network address\n"
-            "  \"addr\": \"xxxx\",        (string) PIVX address for masternode payments\n"
+            "  \"addr\": \"xxxx\",        (string) OASIS address for masternode payments\n"
             "  \"status\": \"xxxx\",      (string) Masternode status\n"
             "  \"message\": \"xxxx\"      (string) Masternode status message\n"
             "}\n"
@@ -749,7 +776,7 @@ UniValue getmasternodewinners(const JSONRPCRequest& request)
             "  {\n"
             "    \"nHeight\": n,           (numeric) block height\n"
             "    \"winner\": {\n"
-            "      \"address\": \"xxxx\",    (string) PIVX MN Address\n"
+            "      \"address\": \"xxxx\",    (string) OASIS MN Address\n"
             "      \"nVotes\": n,          (numeric) Number of votes for winner\n"
             "    }\n"
             "  }\n"
@@ -762,7 +789,7 @@ UniValue getmasternodewinners(const JSONRPCRequest& request)
             "    \"nHeight\": n,           (numeric) block height\n"
             "    \"winner\": [\n"
             "      {\n"
-            "        \"address\": \"xxxx\",  (string) PIVX MN Address\n"
+            "        \"address\": \"xxxx\",  (string) OASIS MN Address\n"
             "        \"nVotes\": n,        (numeric) Number of votes for winner\n"
             "      }\n"
             "      ,...\n"
@@ -1107,6 +1134,9 @@ static const CRPCCommand commands[] =
     { "masternode",         "masternodecurrent",         &masternodecurrent,         true,  {} },
     { "masternode",         "relaymasternodebroadcast",  &relaymasternodebroadcast,  true,  {"hexstring"}  },
     { "masternode",         "startmasternode",           &startmasternode,           true,  {"set","lockwallet","alias","reload_conf"} },
+   
+    /* OASIS feature */
+    {  "oasis",             "reloadmasternodeconfig",   &reloadmasternodeconfig,     true,  {} },
 
     /* Not shown in help */
     { "hidden",             "getcachedblockhashes",      &getcachedblockhashes,      true,  {} },

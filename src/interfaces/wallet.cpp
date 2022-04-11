@@ -1,5 +1,5 @@
 // Copyright (c) 2018-2020 The Bitcoin Core developers
-// Copyright (c) 2020 The PIVX developers
+// Copyright (c) 2020 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
@@ -26,6 +26,7 @@ namespace interfaces {
         }
         result.shielded_balance = balance.m_mine_trusted_shield;
         result.unconfirmed_shielded_balance = balance.m_mine_untrusted_shielded_balance;
+        result.price_usd = balance.m_price_usd;
         return result;
     }
 

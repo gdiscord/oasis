@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
 
 set(QT_MINIMUM_VERSION 5.5.1)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms ${CMAKE_CURRENT_SOURCE_DIR}/pivx/forms ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/forms)
+set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms ${CMAKE_CURRENT_SOURCE_DIR}/oasis/forms ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/forms)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
@@ -100,79 +100,79 @@ SET(QT_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/transactiontablemodel.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/walletmodel.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/walletmodeltransaction.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/pivxgui.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/loadingdialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/pwidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/focuseddialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/guitransactionsutils.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/snackbar.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/navmenuwidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/lockunlock.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/receivedialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/furabstractlistitemdelegate.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/txviewholder.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/qtutils.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/balancebubble.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/expandablebutton.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/topbar.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/txrow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/addressfilterproxymodel.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/dashboardwidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/addresslabelrow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/contactdropdownrow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/contactsdropdown.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/optionbutton.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/mninfodialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/coldstakingmodel.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/mnmodel.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/masternodewizarddialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/mnrow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/masternodeswidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/sendchangeaddressdialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/sendconfirmdialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/sendcustomfeedialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/sendmemodialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/sendmultirow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/send.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/addnewaddressdialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/addnewcontactdialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/requestdialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/receivewidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/myaddressrow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/csrow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/addressholder.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/tooltipmenu.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/addresseswidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/defaultdialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/coldstakingwidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/mnselectiondialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/proposalcard.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/votedialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/createproposaldialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/proposalinfodialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/governancewidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/settingsbackupwallet.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/settingsbittoolwidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/settingsconsolewidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/settingsdisplayoptionswidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/settingsfaqwidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/settingsinformationwidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/settingsmainoptionswidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/settingssignmessagewidgets.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/settingswalletoptionswidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/settingswalletrepairwidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/settingsexportcsv.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings/settingswidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/welcomecontentwidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/splash.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/governancemodel.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/oasisgui.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/loadingdialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/pwidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/focuseddialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/guitransactionsutils.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/snackbar.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/navmenuwidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/lockunlock.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/receivedialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/furabstractlistitemdelegate.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/txviewholder.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/qtutils.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/balancebubble.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/expandablebutton.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/topbar.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/txrow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/addressfilterproxymodel.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/dashboardwidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/addresslabelrow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/contactdropdownrow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/contactsdropdown.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/optionbutton.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/mninfodialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/coldstakingmodel.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/mnmodel.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/masternodewizarddialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/mnrow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/masternodeswidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/sendchangeaddressdialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/sendconfirmdialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/sendcustomfeedialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/sendmemodialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/sendmultirow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/send.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/addnewaddressdialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/addnewcontactdialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/requestdialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/receivewidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/myaddressrow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/csrow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/addressholder.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/tooltipmenu.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/addresseswidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/defaultdialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/coldstakingwidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/mnselectiondialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/proposalcard.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/votedialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/createproposaldialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/proposalinfodialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/governancewidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/settingsbackupwallet.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/settingsbittoolwidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/settingsconsolewidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/settingsdisplayoptionswidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/settingsfaqwidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/settingsinformationwidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/settingsmainoptionswidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/settingssignmessagewidgets.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/settingswalletoptionswidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/settingswalletrepairwidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/settingsexportcsv.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings/settingswidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/welcomecontentwidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/splash.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/governancemodel.cpp
         )
 
 execute_process(
         COMMAND ${MOC_BIN} -o moc_pfborderimage.cpp pfborderimage.h
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/pivx
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/oasis
 )
-list(APPEND QT_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/pivx/moc_pfborderimage.cpp)
+list(APPEND QT_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/oasis/moc_pfborderimage.cpp)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     list(APPEND QT_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/macdockiconhandler.mm)
@@ -188,8 +188,8 @@ target_include_directories(qt_stuff PUBLIC ${CMAKE_SOURCE_DIR}/src
         ${relic_SOURCE_DIR}/include
         ${relic_BINARY_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx
-        ${CMAKE_CURRENT_SOURCE_DIR}/pivx/settings
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis
+        ${CMAKE_CURRENT_SOURCE_DIR}/oasis/settings
         ${BerkeleyDB_INCLUDE_DIRS}
         )
 set_property(TARGET qt_stuff PROPERTY CXX_STANDARD 14)
@@ -202,13 +202,13 @@ set_source_files_properties(${QT_TRANSLATIONS_FILES} PROPERTIES OUTPUT_LOCATION 
 QT5_ADD_TRANSLATION(QM ${QT_TRANSLATIONS_FILES})
 add_custom_target(translations_target ALL DEPENDS ${QM})
 
-QT5_ADD_RESOURCES(QRC_RESOURCE pivx.qrc)
-QT5_ADD_RESOURCES(QRC_LOCALE_RESOURCE pivx_locale.qrc)
+QT5_ADD_RESOURCES(QRC_RESOURCE oasis.qrc)
+QT5_ADD_RESOURCES(QRC_LOCALE_RESOURCE oasis_locale.qrc)
 
-add_executable(pivx-qt pivx.cpp ${QM} ${QRC_RESOURCE} ${QRC_LOCALE_RESOURCE})
-add_dependencies(pivx-qt translations_target libunivalue libsecp256k1 libzcashrust leveldb crc32c bls)
-target_include_directories(pivx-qt PUBLIC ${ENDIAN_INCLUDES} ${GMP_INCLUDE_DIR})
-target_link_libraries(pivx-qt
+add_executable(oasis-qt oasis.cpp ${QM} ${QRC_RESOURCE} ${QRC_LOCALE_RESOURCE})
+add_dependencies(oasis-qt translations_target libunivalue libsecp256k1 libzcashrust leveldb crc32c bls)
+target_include_directories(oasis-qt PUBLIC ${ENDIAN_INCLUDES} ${GMP_INCLUDE_DIR})
+target_link_libraries(oasis-qt
         qt_stuff
         univalue
         SERVER_A WALLET_A COMMON_A ZEROCOIN_A UTIL_A SAPLING_A BITCOIN_CRYPTO_A CLI_A
@@ -218,30 +218,30 @@ target_link_libraries(pivx-qt
         -ldl pthread
         )
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_link_libraries(pivx-qt "-framework Cocoa")
+    target_link_libraries(oasis-qt "-framework Cocoa")
 endif()
 if(ZMQ_FOUND)
-    target_link_libraries(pivx-qt ZMQ_A ${ZMQ_LIB})
-    target_include_directories(pivx-qt PUBLIC ${ZMQ_INCLUDE_DIR})
+    target_link_libraries(oasis-qt ZMQ_A ${ZMQ_LIB})
+    target_include_directories(oasis-qt PUBLIC ${ZMQ_INCLUDE_DIR})
 endif()
 if (QRCODE_FOUND)
-    target_link_libraries(pivx-qt ${QRCODE_LIB})
-    target_include_directories(pivx-qt PUBLIC ${QRCODE_INCLUDE_DIR})
+    target_link_libraries(oasis-qt ${QRCODE_LIB})
+    target_include_directories(oasis-qt PUBLIC ${QRCODE_INCLUDE_DIR})
 endif()
 if(MINIUPNP_FOUND)
-    target_compile_definitions(pivx-qt PUBLIC "-DSTATICLIB -DMINIUPNP_STATICLIB")
-    target_link_libraries(pivx-qt ${MINIUPNP_LIBRARY})
-    target_include_directories(pivx-qt PUBLIC ${MINIUPNP_INCLUDE_DIR})
+    target_compile_definitions(oasis-qt PUBLIC "-DSTATICLIB -DMINIUPNP_STATICLIB")
+    target_link_libraries(oasis-qt ${MINIUPNP_LIBRARY})
+    target_include_directories(oasis-qt PUBLIC ${MINIUPNP_INCLUDE_DIR})
 endif()
 if(NAT-PMP_FOUND)
-    target_link_libraries(pivx-qt ${NAT-PMP_LIBRARY})
-    target_include_directories(pivx-qt PUBLIC ${NAT-PMP_INCLUDE_DIR})
+    target_link_libraries(oasis-qt ${NAT-PMP_LIBRARY})
+    target_include_directories(oasis-qt PUBLIC ${NAT-PMP_INCLUDE_DIR})
 endif()
 
-target_link_libraries(pivx-qt Qt5::Gui Qt5::Core Qt5::Widgets Qt5::Network Qt5::Svg ${QT_LIBRARIES})
+target_link_libraries(oasis-qt Qt5::Gui Qt5::Core Qt5::Widgets Qt5::Network Qt5::Svg ${QT_LIBRARIES})
 if (Qt5DBus_FOUND)
-    target_link_libraries(pivx-qt Qt5::DBus ${QT_LIBRARIES})
+    target_link_libraries(oasis-qt Qt5::DBus ${QT_LIBRARIES})
 endif()
 if (Qt5Charts_FOUND)
-    target_link_libraries(pivx-qt Qt5::Charts ${QT_LIBRARIES})
+    target_link_libraries(oasis-qt Qt5::Charts ${QT_LIBRARIES})
 endif()

@@ -1,12 +1,12 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2021 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2021 The PIVX developers
+// Copyright (c) 2015-2021 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef PIVX_WALLET_H
-#define PIVX_WALLET_H
+#ifndef OASIS_WALLET_H
+#define OASIS_WALLET_H
 
 #include "addressbook.h"
 #include "amount.h"
@@ -71,7 +71,7 @@ static const unsigned int DEFAULT_TX_CONFIRM_TARGET = 1;
 //! -maxtxfee will warn if called with a higher fee than this amount (in satoshis)
 static const CAmount nHighTransactionMaxFeeWarning = 100 * nHighTransactionFeeWarning;
 //! -minstakesplit default
-static const CAmount DEFAULT_MIN_STAKE_SPLIT_THRESHOLD = 100 * COIN;
+static const CAmount DEFAULT_MIN_STAKE_SPLIT_THRESHOLD = 30 * COIN;
 //! Default for -spendzeroconfchange
 static const bool DEFAULT_SPEND_ZEROCONF_CHANGE = true;
 //! Default for -staking
@@ -108,7 +108,7 @@ enum WalletFeature {
     FEATURE_WALLETCRYPT = 40000, // wallet encryption
     FEATURE_COMPRPUBKEY = 60000, // compressed public keys
 
-    FEATURE_PRE_PIVX = 61000, // inherited version..
+    FEATURE_PRE_OASIS = 61000, // inherited version..
 
     // The following features were implemented in BTC but not in our wallet, we can simply skip them.
     // FEATURE_HD = 130000,  Hierarchical key derivation after BIP32 (HD Wallet)
@@ -676,7 +676,7 @@ private:
 
 public:
 
-    static const CAmount DEFAULT_STAKE_SPLIT_THRESHOLD = 500 * COIN;
+    static const CAmount DEFAULT_STAKE_SPLIT_THRESHOLD = 30 * COIN;
 
     //! Generates hd wallet //
     bool SetupSPKM(bool newKeypool = true, bool memOnly = false);
@@ -736,7 +736,7 @@ public:
     // Staker status (last hashed block and time)
     CStakerStatus* pStakerStatus = nullptr;
 
-    // User-defined fee PIV/kb
+    // User-defined fee XOS/kb
     bool fUseCustomFee;
     CAmount nCustomFee;
 
@@ -842,7 +842,7 @@ public:
 
     /**
      * Return list of available coins and locked coins grouped by non-change output address.
-     * PIVX: group coins by pair <CTxDestination, Optional<CTxDestination>>. The optional destination
+     * OASIS: group coins by pair <CTxDestination, Optional<CTxDestination>>. The optional destination
      * is reserved for the staker address in case of P2CS.
      */
     std::map<std::pair<CTxDestination, Optional<CTxDestination>>, std::vector<COutput>> ListCoins() const;
@@ -851,7 +851,7 @@ public:
      */
     std::map<libzcash::SaplingPaymentAddress, std::vector<SaplingNoteEntry>> ListNotes() const;
 
-    /// Get 10000 PIV output and keys which can be used for the Masternode
+    /// Get 40000 XOS output and keys which can be used for the Masternode
     bool GetMasternodeVinAndKeys(CTxIn& txinRet, CPubKey& pubKeyRet,
             CKey& keyRet, std::string strTxHash, std::string strOutputIndex, std::string& strError);
     /// Extract txin information and keys from output
@@ -1031,6 +1031,7 @@ public:
     void ResendWalletTransactions(CConnman* connman) override;
 
     struct Balance {
+        int m_price_usd{0};
         CAmount m_mine_trusted{0};               //!< Trusted, at depth=GetBalance.min_depth or more
         CAmount m_mine_untrusted_pending{0};     //!< Untrusted, but in mempool (pending)
         CAmount m_mine_immature{0};              //!< Immature coinbases/coinstakes in the main chain
@@ -1040,6 +1041,7 @@ public:
     };
     Balance GetBalance(int min_depth = 0) const;
 
+    int getPriceUSD() const;
     CAmount loopTxsBalance(const std::function<void(const uint256&, const CWalletTx&, CAmount&)>&method) const;
     CAmount GetAvailableBalance(bool fIncludeDelegated = true, bool fIncludeShielded = true) const;
     CAmount GetAvailableBalance(isminefilter& filter, bool useCache = false, int minDepth = 1) const;
@@ -1335,4 +1337,4 @@ public:
     }
 };
 
-#endif // PIVX_WALLET_H
+#endif // OASIS_WALLET_H

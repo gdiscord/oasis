@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2021 The Bitcoin Core developers
-// Copyright (c) 2021 The PIVX Core developers
+// Copyright (c) 2021 The OASIS Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
@@ -486,7 +486,7 @@ void BlockAssembler::appendSaplingTreeRoot()
 
 uint256 CalculateSaplingTreeRoot(CBlock* pblock, int nHeight, const CChainParams& chainparams)
 {
-    if (NetworkUpgradeActive(nHeight, chainparams.GetConsensus(), Consensus::UPGRADE_V5_0)) {
+    if (NetworkUpgradeActive(nHeight, chainparams.GetConsensus(), Consensus::UPGRADE_V4_0)) {
         SaplingMerkleTree sapling_tree;
         assert(pcoinsTip->GetSaplingAnchorAt(pcoinsTip->GetBestAnchor(), sapling_tree));
 
@@ -533,18 +533,10 @@ void IncrementExtraNonce(std::shared_ptr<CBlock>& pblock, int nHeight, unsigned 
 
 int32_t ComputeBlockVersion(const Consensus::Params& consensus, int nHeight)
 {
-    if (NetworkUpgradeActive(nHeight, consensus, Consensus::UPGRADE_V5_0)) {
+    if (NetworkUpgradeActive(nHeight, consensus, Consensus::UPGRADE_V4_0)){
         return CBlockHeader::CURRENT_VERSION;       // v11 (since 5.2.99)
-    } else if (consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_V4_0)) {
-        return 7;
-    } else if (consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_V3_4)) {
-        return 6;
-    } else if (consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_BIP65)) {
-        return 5;
-    } else if (consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_ZC)) {
-        return 4;
-    } else {
-        return 3;
+    }else{
+        return 5;  
     }
 }
 

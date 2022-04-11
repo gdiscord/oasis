@@ -1,8 +1,8 @@
-// Copyright (c) 2021 The PIVX developers
+// Copyright (c) 2021 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
-#include "test/test_pivx.h"
+#include "test/test_oasis.h"
 
 #include "blockassembler.h"
 #include "consensus/merkle.h"
@@ -121,7 +121,7 @@ BOOST_FIXTURE_TEST_CASE(mnwinner_test, TestChain100Setup)
     CBlock tipBlock = CreateAndProcessBlock({}, coinbaseKey);
     enableMnSyncAndMNPayments();
     int nextBlockHeight = 103;
-    UpdateNetworkUpgradeParameters(Consensus::UPGRADE_V5_3, nextBlockHeight - 1);
+//    UpdateNetworkUpgradeParameters(Consensus::UPGRADE_V4_0, nextBlockHeight - 1);
 
     // MN list.
     std::vector<FakeMasternode> mnList = buildMNList(tipBlock.GetHash(), tipBlock.GetBlockTime(), 40);

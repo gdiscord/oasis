@@ -1,4 +1,4 @@
-// Copyright (c) 2020 The PIVX developers
+// Copyright (c) 2020 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
@@ -16,5 +16,5 @@ SaplingTestingSetup::~SaplingTestingSetup()
 
 SaplingRegTestingSetup::SaplingRegTestingSetup() : SaplingTestingSetup(CBaseChainParams::REGTEST)
 {
-    UpdateNetworkUpgradeParameters(Consensus::UPGRADE_V5_0, Consensus::NetworkUpgrade::ALWAYS_ACTIVE);
+    UpdateNetworkUpgradeParameters(Consensus::UPGRADE_V4_0, Consensus::NetworkUpgrade::ALWAYS_ACTIVE);
 }

@@ -2,6 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
@@ -117,7 +118,6 @@ UniValue blockheaderToJSON(const CBlockIndex* blockindex)
     result.pushKV("bits", strprintf("%08x", blockindex->nBits));
     result.pushKV("difficulty", GetDifficulty(blockindex));
     result.pushKV("chainwork", blockindex->nChainWork.GetHex());
-    result.pushKV("acc_checkpoint", blockindex->nAccumulatorCheckpoint.GetHex());
     // Sapling shield pool value
     result.pushKV("shield_pool_value", ValuePoolDesc(blockindex->nChainSaplingValue, blockindex->nSaplingValue));
     if (blockindex->pprev)
@@ -141,7 +141,6 @@ UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool tx
     result.pushKV("height", blockindex->nHeight);
     result.pushKV("version", block.nVersion);
     result.pushKV("merkleroot", block.hashMerkleRoot.GetHex());
-    result.pushKV("acc_checkpoint", block.nAccumulatorCheckpoint.GetHex());
     result.pushKV("finalsaplingroot", block.hashFinalSaplingRoot.GetHex());
     UniValue txs(UniValue::VARR);
     for (const auto& txIn : block.vtx) {
@@ -175,7 +174,7 @@ UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool tx
         if (blockindex->pprev && !GetStakeKernelHash(hashProofOfStakeRet, block, blockindex->pprev))
             throw JSONRPCError(RPC_INTERNAL_ERROR, "Cannot get proof of stake hash");
 
-        std::string stakeModifier = (Params().GetConsensus().NetworkUpgradeActive(blockindex->nHeight, Consensus::UPGRADE_V3_4) ?
+        std::string stakeModifier = (Params().GetConsensus().NetworkUpgradeActive(blockindex->nHeight, Consensus::UPGRADE_V4_0) ?
                                      blockindex->GetStakeModifierV2().GetHex() :
                                      strprintf("%016x", blockindex->GetStakeModifierV1()));
         result.pushKV("stakeModifier", stakeModifier);
@@ -670,6 +669,7 @@ UniValue getsupplyinfo(const JSONRPCRequest& request)
             "  \"transparentsupply\" : n   (numeric) The sum of all spendable transaction outputs at height updateheight\n"
             "  \"shieldsupply\": n         (numeric) Chain tip shield pool value\n"
             "  \"totalsupply\": n          (numeric) The sum of transparentsupply and shieldsupply\n"
+            "  \"burned\": n               (numeric) The sum of transparentsupply and shieldsupply\n"
             "}\n"
 
             "\nExamples:\n" +
@@ -691,6 +691,7 @@ UniValue getsupplyinfo(const JSONRPCRequest& request)
     ret.pushKV("shieldsupply", ValuePoolDesc(shieldedPoolValue, nullopt)["chainValue"]);
     const CAmount totalSupply = tSupply + (shieldedPoolValue ? *shieldedPoolValue : 0);
     ret.pushKV("totalsupply", ValueFromAmount(totalSupply));
+    ret.pushKV("burned", ValueFromAmount(nBurnedCoins));
 
     return ret;
 }
@@ -816,14 +817,14 @@ UniValue gettxout(const JSONRPCRequest& request)
             "{\n"
             "  \"bestblock\" : \"hash\",    (string) the block hash\n"
             "  \"confirmations\" : n,       (numeric) The number of confirmations\n"
-            "  \"value\" : x.xxx,           (numeric) The transaction value in PIV\n"
+            "  \"value\" : x.xxx,           (numeric) The transaction value in XOS\n"
             "  \"scriptPubKey\" : {         (json object)\n"
             "     \"asm\" : \"code\",       (string) \n"
             "     \"hex\" : \"hex\",        (string) \n"
             "     \"reqSigs\" : n,          (numeric) Number of required signatures\n"
             "     \"type\" : \"pubkeyhash\", (string) The type, eg pubkeyhash\n"
-            "     \"addresses\" : [          (array of string) array of pivx addresses\n"
-            "     \"pivxaddress\"            (string) pivx address\n"
+            "     \"addresses\" : [          (array of string) array of oasis addresses\n"
+            "     \"oasisaddress\"            (string) oasis address\n"
             "        ,...\n"
             "     ]\n"
             "  },\n"
@@ -913,21 +914,10 @@ static UniValue SoftForkMajorityDesc(int version, const CBlockIndex* pindex, con
     UniValue rv(UniValue::VOBJ);
     Consensus::UpgradeIndex idx;
     switch(version) {
-    case 1:
-    case 2:
-    case 3:
-        idx = Consensus::BASE_NETWORK;
-        break;
-    case 4:
-        idx = Consensus::UPGRADE_ZC;
-        break;
     case 5:
-        idx = Consensus::UPGRADE_BIP65;
+        idx = Consensus::UPGRADE_MESG_V2;
         break;
     case 6:
-        idx = Consensus::UPGRADE_V3_4;
-        break;
-    case 7:
         idx = Consensus::UPGRADE_V4_0;
         break;
     default:
@@ -994,6 +984,8 @@ UniValue getblockchaininfo(const JSONRPCRequest& request)
             "  \"difficulty\": xxxxxx,     (numeric) the current difficulty\n"
             "  \"verificationprogress\": xxxx, (numeric) estimate of verification progress [0..1]\n"
             "  \"chainwork\": \"xxxx\"     (string) total amount of work in active chain, in hexadecimal\n"
+            "  \"supply\" : \"supply\"        (numeric) The total amount of XOS in existence\n"
+            "  \"burned\" : \"supply\"        (numeric) The total amount of XOS burned (In fees and unspendable outputs)\n"
             "  \"shield_pool_value\": {  (object) Chain tip shield pool value\n"
             "    \"chainValue\":        (numeric) Total value held by the Sapling circuit up to and including the chain tip\n"
             "    \"valueDelta\":        (numeric) Change in value held by the Sapling circuit over the chain tip block\n"
@@ -1025,6 +1017,7 @@ UniValue getblockchaininfo(const JSONRPCRequest& request)
     const Consensus::Params& consensusParams = Params().GetConsensus();
     const CBlockIndex* pChainTip = chainActive.Tip();
     int nTipHeight = pChainTip ? pChainTip->nHeight : -1;
+    UniValue supply_info = getsupplyinfo(JSONRPCRequest());
 
     UniValue obj(UniValue::VOBJ);
     obj.pushKV("chain", Params().NetworkIDString());
@@ -1034,9 +1027,11 @@ UniValue getblockchaininfo(const JSONRPCRequest& request)
     obj.pushKV("difficulty", (double)GetDifficulty());
     obj.pushKV("verificationprogress", Checkpoints::GuessVerificationProgress(pChainTip));
     obj.pushKV("chainwork", pChainTip ? pChainTip->nChainWork.GetHex() : "");
+    obj.pushKV("moneysupply", supply_info["totalsupply"]);
     // Sapling shield pool value
     obj.pushKV("shield_pool_value", pChainTip ? ValuePoolDesc(pChainTip->nChainSaplingValue, pChainTip->nSaplingValue) : 0);
     obj.pushKV("initial_block_downloading", IsInitialBlockDownload());
+    obj.pushKV("burned", ValueFromAmount(nBurnedCoins));
     UniValue softforks(UniValue::VARR);
     softforks.push_back(SoftForkDesc("bip65", 5, pChainTip));
     obj.pushKV("softforks",             softforks);
@@ -1363,10 +1358,6 @@ UniValue getblockindexstats(const JSONRPCRequest& request) {
         // loop through each tx in block and save size and fee (except for coinbase/coinstake)
         for (int idx = firstTxIndex; idx < ntx; idx++) {
             const CTransaction& tx = *(block.vtx[idx]);
-
-            // zerocoin txes have fixed fee, don't count them here.
-            if (tx.ContainsZerocoins())
-                continue;
 
             // Transaction size
             nBytes += GetSerializeSize(tx, CLIENT_VERSION);

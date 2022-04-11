@@ -5,6 +5,7 @@
 // Copyright (c) 2013-2014 The NovaCoin Developers
 // Copyright (c) 2014-2018 The BlackCoin Developers
 // Copyright (c) 2015-2020 The PIVX developers
+// Copyright (c) 2019-2022 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,7 +13,7 @@
 #define BITCOIN_MAIN_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/pivx-config.h"
+#include "config/oasis-config.h"
 #endif
 
 #include "amount.h"
@@ -37,12 +38,10 @@
 #include <utility>
 #include <vector>
 
-class AccumulatorCache;
 class CBlockIndex;
 class CBlockTreeDB;
 class CBudgetManager;
 class CCoinsViewDB;
-class CZerocoinDB;
 class CSporkDB;
 class CBloomFilter;
 class CInv;
@@ -71,7 +70,6 @@ static const bool DEFAULT_TXINDEX = true;
 static const bool DEFAULT_CHECKPOINTS_ENABLED = true;
 /** The maximum size for transactions we're willing to relay/mine */
 static const unsigned int MAX_STANDARD_TX_SIZE = 100000;
-static const unsigned int MAX_ZEROCOIN_TX_SIZE = 150000;
 /** Maximum kilobytes for transactions to store for processing during reorg */
 static const unsigned int MAX_DISCONNECTED_TX_POOL_SIZE = 20000;
 /** Default for -checkblocks */
@@ -128,6 +126,7 @@ extern BlockMap mapBlockIndex;
 extern uint64_t nLastBlockTx;
 extern uint64_t nLastBlockSize;
 extern int64_t nTimeBestReceived;
+extern CAmount nBurnedCoins;
 
 // Best block section
 extern Mutex g_best_block_mutex;
@@ -364,12 +363,6 @@ extern std::unique_ptr<CCoinsViewCache> pcoinsTip;
 
 /** Global variable that points to the active block tree (protected by cs_main) */
 extern std::unique_ptr<CBlockTreeDB> pblocktree;
-
-/** Global variable that points to the zerocoin database (protected by cs_main) */
-extern std::unique_ptr<CZerocoinDB> zerocoinDB;
-
-/** In-memory cache for the zerocoin accumulators */
-extern std::unique_ptr<AccumulatorCache> accumulatorCache;
 
 /** Global variable that points to the spork database (protected by cs_main) */
 extern std::unique_ptr<CSporkDB> pSporkDB;

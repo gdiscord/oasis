@@ -1,55 +1,59 @@
-PIVX Core integration/staging repository
+<p align="center">
+  <img src="https://cdn.discordapp.com/attachments/434714258127847425/533141511907573780/oasis-no-bkgd-.png" width=32%/>
+</p>
+
+OASIS Core integration/staging repository
 =====================================
 
-[![master Actions Status](https://github.com/PIVX-Project/PIVX/workflows/CI%20Actions%20for%20PIVX/badge.svg)](https://github.com/PIVX-Project/PIVX/actions)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/PIVX-Project/pivx?color=%235c4b7d&cacheSeconds=3600)](https://github.com/PIVX-Project/PIVX/releases)
-[![GitHub Release Date](https://img.shields.io/github/release-date/PIVX-Project/pivx?color=%235c4b7d&cacheSeconds=3600)](https://github.com/PIVX-Project/PIVX/releases)
+[![GitHub version](https://badge.fury.io/gh/oasiscointeam%2Foasis-core.svg)](https://badge.fury.io/gh/oasiscointeam%2Foasis-core)
 
-## What is PIVX?
+**OASIS Coin Masternode Cryptocurrency**
 
-PIVX is an open source community-driven cryptocurrency, focused on five main aspects:
+OASIS is based on a Community Takeover of a previous MN project called _1UP_
 
-(1) User Data Protection: Through the use of SHIELD, a zk-SNARKs based privacy protocol.
+Fast transactions featuring guaranteed zero confirmation transactions, known as _SwiftX_.
 
-(2) Low environmental footprint and network participation equality: Through the use of a highly developed Proof of Stake protocol.
+Decentralized blockchain voting provides for consensus based advancement of the current Masternode technology used to secure the network and provide the above features, each Masternode is secured with a collateral of **285 XOS**.
 
-(3) Decentralized Governance System: A DAO built on top of the tier two Masternodes network, enabling a monthly community treasury, proposals submission and decentralized voting.
+**Website:** <a href="https://oasisco.in/">https://oasisco.in/</a><br>
+**BitcoinTalk:** <a href="https://bitcointalk.org/index.php?topic=5352583">https://bitcointalk.org/index.php?topic=5352583</a><br>
+**Discord:** <a href="https://discord.gg/5SgtbHK">https://discord.gg/5SgtbHK</a><br>
+**Telegram:** <a href="https://t.me/intheOASIS">https://t.me/intheOASIS</a><br>
+**Twitter:** <a href="https://twitter.com/exploreOASIS">https://twitter.com/exploreOASIS</a><br>
+**Explorer 1:** <a href="https://explorer.oasisco.in/">https://explorer.oasisco.in</a><br>
+**Explorer 2:** <a href="https://oasis.ccore.online/">https://oasis.ccore.online/</a><br>
+**Exchange:** <a href="https://www.southxchange.com/Market/Book/XOS/BTC">https://www.southxchange.com/Market/Book/XOS/BTC</a><br>
 
-(4) Fast Transactions: Through the use of fast block times and the tier two network, PIVX is committed to continue researching new and better instant transactions mechanisms.
 
-(5) Ease of Use: PIVX is determined to offer the best possible graphical interface for a core node/wallet. A full featured graphical product for new and advanced users.
+### Coin Specs
+<table>
+<tr><td>Algo</td><td>Xevan</td></tr>
+<tr><td>Block Time</td><td>60 Seconds</td></tr>
+<tr><td>Difficulty Retargeting</td><td>Every Block</td></tr>
+<tr><td>Masternode Collateral</td><td>285 XOS</td></tr>
+<tr><td>Max Coin Supply (PoW Phase)</td><td>603,720 XOS</td></tr>
+<tr><td>Max Coin Supply (PoS Phase)</td><td>Infinite</td></tr>
+<tr><td>Block Maturity</td><td>30</td></tr>
+<tr><td>Block Confirmation </td><td>6</td></tr>
+<tr><td>Pos Minimum Depth </td><td>480 Blocks</td></tr>
+<tr><td>Premine</td><td>603,720 XOS*</td></tr>
+</table>
+*Balance at snapshot taken July 15th 2021 at 00:00 UTC
+<br>
+<br>
+##### Community Donation Fund<br>
+https://explorer.oasisco.in/address/odkxu5DTrx674PS97zLydHjaYQ9epLcodh
+https://oasis.ccore.online/address/odkxu5DTrx674PS97zLydHjaYQ9epLcodh
 
-A lot more information and specs at [PIVX.org](https://www.pivx.org/). Join the community at [PIVX Discord](https://discordapp.com/invite/jzqVsJd).
-
-## License
-PIVX Core is released under the terms of the MIT license. See [COPYING](https://github.com/PIVX-Project/PIVX/blob/master/COPYING) for more information or see https://opensource.org/licenses/MIT.
-
-## Development Process
-
-The master branch is regularly built (see doc/build-*.md for instructions) and tested, but it is not guaranteed to be completely stable. [Tags](https://github.com/PIVX-Project/PIVX/tags) are created regularly from release branches to indicate new official, stable release versions of PIVX Core.
-
-The contribution workflow is described in [CONTRIBUTING.md](https://github.com/PIVX-Project/PIVX/blob/master/CONTRIBUTING.md) and useful hints for developers can be found in [doc/developer-notes.md](https://github.com/PIVX-Project/PIVX/blob/master/doc/developer-notes.md).
-
-## Testing
-
-Testing and code review is the bottleneck for development; we get more pull requests than we can review and test on short notice. Please be patient and help out by testing other people's pull requests, and remember this is a security-critical project where any mistake might cost people a lot of money.
-
-## Automated Testing
-
-Developers are strongly encouraged to write [unit tests](https://github.com/PIVX-Project/PIVX/blob/master/src/test/README.md) for new code, and to submit new unit tests for old code. Unit tests can be compiled and run (assuming they weren't disabled in configure) with: make check. Further details on running and extending unit tests can be found in [/src/test/README.md](https://github.com/PIVX-Project/PIVX/blob/master/src/test/README.md).
-
-There are also regression and integration tests, written in Python. These tests can be run (if the test dependencies are installed) with: test/functional/test_runner.py`
-
-The CI (Continuous Integration) systems make sure that every pull request is built for Windows, Linux, and macOS, and that unit/sanity tests are run automatically.
-
-## Manual Quality Assurance (QA) Testing
-
-Changes should be tested by somebody other than the developer who wrote the code. This is especially important for large or high-risk changes. It is useful to add a test plan to the pull request description if testing the changes is not straightforward.
-
-## Translations
-
-Changes to translations as well as new translations can be submitted to PIVX Core's Transifex page.
-
-Translations are periodically pulled from Transifex and merged into the git repository. See the [translation process](https://github.com/PIVX-Project/PIVX/blob/master/doc/translation_process.md) for details on how this works.
-
-Important: We do not accept translation changes as GitHub pull requests because the next pull from Transifex would automatically overwrite them again.
+### PoS Rewards Breakdown
+<table>
+<th>Phase</th><th>Block Height</th><th>Reward</th><th>Masternodes</th><th>Stakers</th>
+<tr><td>Phase 0</td><td>1-600</td><td>N/A </td><td>N/A (PoW)</td><td>N/A (PoW)</td></tr>
+<tr><td>Phase 1</td><td>601-1553600</td><td>0.2 XOS</td><td>75% (0.15 XOS)</td><td>25% (0.05 XOS)</td></tr>
+<tr><td>Phase 2</td><td>1553601-3656000</td><td>0.1 XOS</td><td>75% (0.0725 XOS)</td><td>25% (0.025 XOS)</td></tr>
+<tr><td>Phase 3</td><td>3656001-5758400</td><td>0.05 XOS</td><td>75% (0.0375 XOS)</td><td>25% (0.0125 XOS)</td></tr>
+<tr><td>Phase 4</td><td>5758401-7860800</td><td>0.025 XOS</td><td>75% (0.01875 XOS)</td><td>25% (0.00625 XOS)</td></tr>
+<tr><td>Phase 5</td><td>7860801-9963200</td><td>0.0125 XOS</td><td>75% (0.0075 XOS)</td><td>25% (0.0025 XOS)</td></tr>
+<tr><td>Phase 6</td><td>9963201-20000000</td><td>0.00625 XOS</td><td>75% (0.0075 XOS)</td><td>25% (0.0025 XOS)</td></tr>
+<tr><td>Phase 7</td><td>20000001-infinity</td><td>0.003125 XOS</td><td>75% (0.0075 XOS)</td><td>25% (0.0025 XOS)</td></tr>
+</table>

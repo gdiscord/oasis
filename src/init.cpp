@@ -4,13 +4,15 @@
 // Copyright (c) 2011-2013 The PPCoin developers
 // Copyright (c) 2013-2014 The NovaCoin Developers
 // Copyright (c) 2014-2018 The BlackCoin Developers
-// Copyright (c) 2015-2021 The PIVX developers
+// Copyright (c) 2015-2021 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/pivx-config.h"
+#include "config/oasis-config.h"
 #endif
+
+#include "forgeman.h"
 
 #include "init.h"
 
@@ -57,7 +59,6 @@
 #include "util/threadnames.h"
 #include "validation.h"
 #include "validationinterface.h"
-#include "zpivchain.h"
 #include "warnings.h"
 
 #ifdef ENABLE_WALLET
@@ -203,7 +204,7 @@ void Shutdown()
     /// for example if the data directory was found to be locked.
     /// Be sure that anything that writes files or flushes caches only does this if the respective
     /// module was initialized.
-    util::ThreadRename("pivx-shutoff");
+    util::ThreadRename("oasis-shutoff");
     mempool.AddTransactionsUpdated(1);
     StopHTTPRPC();
     StopREST();
@@ -279,8 +280,6 @@ void Shutdown()
         pcoinscatcher.reset();
         pcoinsdbview.reset();
         pblocktree.reset();
-        zerocoinDB.reset();
-        accumulatorCache.reset();
         pSporkDB.reset();
         deterministicMNManager.reset();
         evoDb.reset();
@@ -413,7 +412,9 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-checkblocks=<n>", strprintf("How many blocks to check at startup (default: %u, 0 = all)", DEFAULT_CHECKBLOCKS));
     strUsage += HelpMessageOpt("-checklevel=<n>", strprintf("How thorough the block verification of -checkblocks is (0-4, default: %u)", DEFAULT_CHECKLEVEL));
 
-    strUsage += HelpMessageOpt("-conf=<file>", strprintf("Specify configuration file (default: %s)", PIVX_CONF_FILENAME));
+    strUsage += HelpMessageOpt("-conf=<file>", strprintf("Specify configuration file (default: %s)", OASIS_CONF_FILENAME));
+    strUsage += HelpMessageOpt("-forgeconf=<file>", strprintf(_("Specify Forge configuration file (default: %s)"), "forge.conf"));
+
     if (mode == HMM_BITCOIND) {
 #if !defined(WIN32)
         strUsage += HelpMessageOpt("-daemon", "Run in the background as a daemon and accept commands");
@@ -435,7 +436,7 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-persistmempool", strprintf("Whether to save the mempool on shutdown and load on restart (default: %u)", DEFAULT_PERSIST_MEMPOOL));
     strUsage += HelpMessageOpt("-par=<n>", strprintf("Set the number of script verification threads (%u to %d, 0 = auto, <0 = leave that many cores free, default: %d)", -GetNumCores(), MAX_SCRIPTCHECK_THREADS, DEFAULT_SCRIPTCHECK_THREADS));
 #ifndef WIN32
-    strUsage += HelpMessageOpt("-pid=<file>", strprintf("Specify pid file (default: %s)", PIVX_PID_FILENAME));
+    strUsage += HelpMessageOpt("-pid=<file>", strprintf("Specify pid file (default: %s)", OASIS_PID_FILENAME));
 #endif
     strUsage += HelpMessageOpt("-reindex-chainstate", "Rebuild chain state from the currently indexed blocks");
     strUsage += HelpMessageOpt("-reindex", "Rebuild block chain index from current blk000??.dat files on startup");
@@ -540,11 +541,11 @@ std::string HelpMessage(HelpMessageMode mode)
     }
     strUsage += HelpMessageOpt("-shrinkdebugfile", "Shrink debug.log file on client startup (default: 1 when no -debug)");
     AppendParamsHelpMessages(strUsage, showDebug);
-    strUsage += HelpMessageOpt("-litemode=<n>", strprintf("Disable all PIVX specific functionality (Masternodes, Budgeting) (0-1, default: %u)", 0));
+    strUsage += HelpMessageOpt("-litemode=<n>", strprintf("Disable all OASIS specific functionality (Masternodes, Budgeting) (0-1, default: %u)", 0));
 
     strUsage += HelpMessageGroup("Masternode options:");
     strUsage += HelpMessageOpt("-masternode=<n>", strprintf("Enable the client to act as a masternode (0-1, default: %u)", DEFAULT_MASTERNODE));
-    strUsage += HelpMessageOpt("-mnconf=<file>", strprintf("Specify masternode configuration file (default: %s)", PIVX_MASTERNODE_CONF_FILENAME));
+    strUsage += HelpMessageOpt("-mnconf=<file>", strprintf("Specify masternode configuration file (default: %s)", OASIS_MASTERNODE_CONF_FILENAME));
     strUsage += HelpMessageOpt("-mnconflock=<n>", strprintf("Lock masternodes from masternode configuration file (default: %u)", DEFAULT_MNCONFLOCK));
     strUsage += HelpMessageOpt("-masternodeprivkey=<n>", "Set the masternode private key");
     strUsage += HelpMessageOpt("-masternodeaddr=<n>", strprintf("Set external address:port to get to this masternode (example: %s)", "128.127.106.235:51472"));
@@ -659,7 +660,7 @@ struct CImportingNow {
 
 void ThreadImport(const std::vector<fs::path>& vImportFiles)
 {
-    util::ThreadRename("pivx-loadblk");
+    util::ThreadRename("oasis-loadblk");
     CImportingNow imp;
     ScheduleBatchPriority();
 
@@ -734,7 +735,7 @@ void ThreadImport(const std::vector<fs::path>& vImportFiles)
 }
 
 /** Sanity checks
- *  Ensure that PIVX is running in a usable environment with all
+ *  Ensure that OASIS is running in a usable environment with all
  *  necessary library support.
  */
 bool InitSanityCheck(void)
@@ -997,13 +998,13 @@ void InitLogging()
 
     fLogIPs = gArgs.GetBoolArg("-logips", DEFAULT_LOGIPS);
 
-    std::string version_string = FormatFullVersion();
+    std::string version_string = FormatFullVersionWithCodename();
 #ifdef DEBUG
     version_string += " (debug build)";
 #else
     version_string += " (release build)";
 #endif
-    LogPrintf("PIVX version %s\n", version_string);
+    LogPrintf("OASIS version %s\n", version_string);
 }
 
 bool AppInitParameterInteraction()
@@ -1064,9 +1065,6 @@ bool AppInitParameterInteraction()
     // Check for -tor - as this is a privacy risk to continue, exit here
     if (gArgs.GetBoolArg("-tor", false))
         return UIError(strprintf(_("Error: Unsupported argument %s found, use %s."), "-tor", "-onion"));
-    // Check level must be 4 for zerocoin checks
-    if (gArgs.IsArgSet("-checklevel"))
-        return UIError(strprintf(_("Error: Unsupported argument %s found. Checklevel must be level 4."), "-checklevel"));
     // Exit early if -masternode=1 and -listen=0
     if (gArgs.GetBoolArg("-masternode", DEFAULT_MASTERNODE) && !gArgs.GetBoolArg("-listen", DEFAULT_LISTEN))
         return UIError(strprintf(_("Error: %s must be true if %s is set."), "-listen", "-masternode"));
@@ -1164,7 +1162,7 @@ bool AppInitParameterInteraction()
 
 static bool LockDataDirectory(bool probeOnly)
 {
-    // Make sure only a single PIVX process is using the data directory.
+    // Make sure only a single OASIS process is using the data directory.
     fs::path datadir = GetDataDir();
     if (!DirIsWritable(datadir)) {
         return UIError(strprintf(_("Cannot write to data directory '%s'; check permissions."), datadir.string()));
@@ -1219,16 +1217,16 @@ bool AppInitMain()
         LogPrintf("Startup time: %s\n", FormatISO8601DateTime(GetTime()));
     LogPrintf("Default data directory %s\n", GetDefaultDataDir().string());
     LogPrintf("Using data directory %s\n", GetDataDir().string());
-    LogPrintf("Using config file %s\n", GetConfigFile(gArgs.GetArg("-conf", PIVX_CONF_FILENAME)).string());
+    LogPrintf("Using config file %s\n", GetConfigFile(gArgs.GetArg("-conf", OASIS_CONF_FILENAME)).string());
     LogPrintf("Using at most %i automatic connections (%i file descriptors available)\n", nMaxConnections, nFD);
     std::ostringstream strErrors;
 
     // Warn about relative -datadir path.
     if (gArgs.IsArgSet("-datadir") && !fs::path(gArgs.GetArg("-datadir", "")).is_absolute()) {
         LogPrintf("Warning: relative datadir option '%s' specified, which will be interpreted relative to the "
-                  "current working directory '%s'. This is fragile because if PIVX is started in the future "
+                  "current working directory '%s'. This is fragile because if OASIS is started in the future "
                   "from a different location. It will be unable to locate the current data files. There could "
-                  "also be data loss if PIVX is started while in a temporary directory.\n",
+                  "also be data loss if OASIS is started while in a temporary directory.\n",
             gArgs.GetArg("-datadir", ""), fs::current_path().string());
     }
 
@@ -1285,9 +1283,8 @@ bool AppInitMain()
         fs::path blocksDir = GetBlocksDir();
         fs::path chainstateDir = GetDataDir() / "chainstate";
         fs::path sporksDir = GetDataDir() / "sporks";
-        fs::path zerocoinDir = GetDataDir() / "zerocoin";
 
-        LogPrintf("Deleting blockchain folders blocks, chainstate, sporks and zerocoin\n");
+        LogPrintf("Deleting blockchain folders blocks, chainstate and sporks \n");
         // We delete in 4 individual steps in case one of the folder is missing already
         try {
             if (fs::exists(blocksDir)){
@@ -1305,10 +1302,6 @@ bool AppInitMain()
                 LogPrintf("-resync: folder deleted: %s\n", sporksDir.string().c_str());
             }
 
-            if (fs::exists(zerocoinDir)){
-                fs::remove_all(zerocoinDir);
-                LogPrintf("-resync: folder deleted: %s\n", zerocoinDir.string().c_str());
-            }
         } catch (const fs::filesystem_error& error) {
             LogPrintf("Failed to delete blockchain folders %s\n", error.what());
         }
@@ -1541,10 +1534,7 @@ bool AppInitMain()
                 pcoinscatcher.reset();
                 pblocktree.reset(new CBlockTreeDB(nBlockTreeDBCache, false, fReset));
 
-                //PIVX specific: zerocoin and spork DB's
-                zerocoinDB.reset(new CZerocoinDB(0, false, fReindex));
                 pSporkDB.reset(new CSporkDB(0, false, false));
-                accumulatorCache.reset(new AccumulatorCache(zerocoinDB.get()));
 
                 deterministicMNManager.reset();
                 evoDb.reset();
@@ -1558,7 +1548,7 @@ bool AppInitMain()
                 // End loop if shutdown was requested
                 if (ShutdownRequested()) break;
 
-                // PIVX: load previous sessions sporks if we have them.
+                // OASIS: load previous sessions sporks if we have them.
                 uiInterface.InitMessage(_("Loading sporks..."));
                 sporkManager.LoadSporksFromDB();
 
@@ -1586,6 +1576,7 @@ bool AppInitMain()
                     strLoadError = strprintf(_("You need to rebuild the database using %s to change %s"), "-reindex-chainstate", "-txindex");
                     break;
                 }
+
 
                 // At this point blocktree args are consistent with what's on disk.
                 // If we're not mid-reindex (based on disk + args), add a genesis block on disk.
@@ -1630,27 +1621,28 @@ bool AppInitMain()
                 }
 
                 if (Params().NetworkIDString() == CBaseChainParams::MAIN) {
-                    // Prune zerocoin invalid outs if they were improperly stored in the coins database
                     LOCK(cs_main);
                     int chainHeight = chainActive.Height();
-                    bool fZerocoinActive = chainHeight > 0 && consensus.NetworkUpgradeActive(chainHeight, Consensus::UPGRADE_ZC);
 
                     uiInterface.InitMessage(_("Loading/Pruning invalid outputs..."));
-                    if (fZerocoinActive) {
-                        if (!pcoinsTip->PruneInvalidEntries()) {
-                            strLoadError = _("System error while flushing the chainstate after pruning invalid entries. Possible corrupt database.");
-                            break;
-                        }
                         MoneySupply.Update(pcoinsTip->GetTotalAmount(), chainHeight);
-                        // No need to keep the invalid outs in memory. Clear the map 100 blocks after the last invalid UTXO
                         if (chainHeight > consensus.height_last_invalid_UTXO + 100) {
                             invalid_out::setInvalidOutPoints.clear();
                         }
-                    } else {
-                        // Populate list of invalid/fraudulent outpoints that are banned from the chain
-                        // They will not be added to coins view
                         invalid_out::LoadOutpoints();
-                    }
+                }
+
+                // Only check supply / burned statistics if we have enough blocks
+                if (chainActive.Height() > 2) {
+                    // Load and Check burned supply
+                    int nIntBurnedCoins = 0;
+                    bool reindexSupply = !pblocktree->ReadInt("burned", nIntBurnedCoins);
+                    if (nIntBurnedCoins > 0) {
+                        LogPrintf("Loaded nBurnedCoins: %u \n", nIntBurnedCoins);
+                        nBurnedCoins = nIntBurnedCoins * COIN;
+                    } else {
+                        LogPrintf("Failed to load nBurnedCoins\n");
+                   }
                 }
 
                 if (!is_coinsview_empty) {
@@ -1918,7 +1910,27 @@ bool AppInitMain()
         return false;
     }
 
-    // ********************************************************* Step 11: start node
+    
+  // ********************************************************* Step 11: Lock Forge items
+#ifdef ENABLE_WALLET
+    {      
+        if (!vpwallets.empty()) {
+           for (CWalletRef pwallet : vpwallets) {      
+                LogPrintf("Locking Forge Items:\n");
+                LOCK(pwallet->cs_wallet);
+                uint256 itemTxHash;
+                for (CForge::CForgeItem item : forgeMain.getEntries()) {
+                    LogPrintf("  %s %s\n", item.getTxHash(), item.getOutputIndex());
+                    itemTxHash.SetHex(item.getTxHash());
+                    COutPoint outpoint = COutPoint(itemTxHash, (unsigned int) std::stoul(item.getOutputIndex().c_str()));
+                    pwallet->LockCoin(outpoint);
+               }
+           }
+        }
+    }
+#endif
+
+    // ********************************************************* Step 12: start node
 
     if (!strErrors.str().empty())
         return UIError(strErrors.str());
@@ -1978,7 +1990,7 @@ bool AppInitMain()
     }
 #endif
 
-    // ********************************************************* Step 12: finished
+    // ********************************************************* Step 13: finished
 
     SetRPCWarmupFinished();
     uiInterface.InitMessage(_("Done loading"));

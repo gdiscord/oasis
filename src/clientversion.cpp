@@ -1,5 +1,5 @@
 // Copyright (c) 2012-2017 The Bitcoin Core developers
-// Copyright (c) 2016-2019 The PIVX developers
+// Copyright (c) 2016-2019 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,10 +10,17 @@
 
 /**
  * Name of client reported in the 'version' message. Report the same name
- * for both pivxd and pivx-qt, to make it harder for attackers to
+ * for both oasisd and oasis-qt, to make it harder for attackers to
  * target servers or GUI users specifically.
  */
 const std::string CLIENT_NAME(PACKAGE_NAME);
+
+/**
+ * The Codename of the current release, often appended to CLIENT_NAME.
+ * E.g: Leap (The first code-named OASIS Core release, for v3.0.0)
+ */
+const std::string CLIENT_CODENAME = "Tropos";
+
 
 /**
  * Client version number
@@ -42,10 +49,11 @@ const std::string CLIENT_NAME(PACKAGE_NAME);
 #include "obj/build.h"
 #endif
 
-//! git will put "#define GIT_ARCHIVE 1" on the next line inside archives. $Format:%n#define GIT_ARCHIVE 1$
+//! git will put "#define GIT_ARCHIVE 1" on the next line inside archives. 
+#define GIT_ARCHIVE 1
 #ifdef GIT_ARCHIVE
-#define GIT_COMMIT_ID "$Format:%H$"
-#define GIT_COMMIT_DATE "$Format:%cD$"
+#define GIT_COMMIT_ID "eadae7310fdd7fcb6d7777481b6f8353eada6e6e"
+#define GIT_COMMIT_DATE "Mon, 4 Apr 2022 21:43:54 +0100"
 #endif
 
 #define BUILD_DESC_WITH_SUFFIX(maj, min, rev, build, suffix) \
@@ -67,14 +75,29 @@ const std::string CLIENT_NAME(PACKAGE_NAME);
 #endif
 #endif
 
-const std::string CLIENT_BUILD(BUILD_DESC CLIENT_VERSION_SUFFIX);
+#ifndef BUILD_DATE
+#ifdef GIT_COMMIT_DATE
+#define BUILD_DATE GIT_COMMIT_DATE
+#else
+#define BUILD_DATE __DATE__ ", " __TIME__
+#endif
+#endif
 
-static std::string FormatVersion(int nVersion)
+const std::string CLIENT_BUILD(BUILD_DESC CLIENT_VERSION_SUFFIX);
+const std::string CLIENT_DATE(BUILD_DATE);
+
+static std::string FormatVersion(int nVersion, bool includeCodename)
 {
+    std::string strVer = "";
     if (nVersion % 100 == 0)
-        return strprintf("%d.%d.%d", nVersion / 1000000, (nVersion / 10000) % 100, (nVersion / 100) % 100);
+        strVer = strprintf("%d.%d.%d", nVersion / 1000000, (nVersion / 10000) % 100, (nVersion / 100) % 100);
     else
-        return strprintf("%d.%d.%d.%d", nVersion / 1000000, (nVersion / 10000) % 100, (nVersion / 100) % 100, nVersion % 100);
+        strVer = strprintf("%d.%d.%d.%d", nVersion / 1000000, (nVersion / 10000) % 100, (nVersion / 100) % 100, nVersion % 100);
+    
+    if (includeCodename)
+        strVer += " (" + CLIENT_CODENAME + ")";
+    
+    return strVer;
 }
 
 std::string FormatFullVersion()
@@ -82,9 +105,14 @@ std::string FormatFullVersion()
     return CLIENT_BUILD;
 }
 
-std::string FormatVersionFriendly()
+std::string FormatFullVersionWithCodename()
 {
-    return FormatVersion(CLIENT_VERSION);
+    return FormatVersionFriendly(true);
+}
+
+std::string FormatVersionFriendly(bool includeCodename)
+{
+    return FormatVersion(CLIENT_VERSION, includeCodename);
 }
 
 /** 
@@ -94,7 +122,7 @@ std::string FormatSubVersion(const std::string& name, int nClientVersion, const 
 {
     std::ostringstream ss;
     ss << "/";
-    ss << name << ":" << FormatVersion(nClientVersion);
+    ss << name << ":" << FormatVersion(nClientVersion, false);
     if (!comments.empty()) {
         std::vector<std::string>::const_iterator it(comments.begin());
         ss << "(" << *it;

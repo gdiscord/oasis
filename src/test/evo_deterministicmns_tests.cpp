@@ -1,9 +1,9 @@
 // Copyright (c) 2018-2021 The Dash Core developers
-// Copyright (c) 2021 The PIVX developers
+// Copyright (c) 2021 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "test/test_pivx.h"
+#include "test/test_oasis.h"
 
 #include "blockassembler.h"
 #include "consensus/merkle.h"
@@ -24,7 +24,7 @@
 
 typedef std::map<COutPoint, std::pair<int, CAmount>> SimpleUTXOMap;
 
-// static 0.1 PIV fee used for the special txes in these tests
+// static 0.1 XOS fee used for the special txes in these tests
 static const CAmount fee = 10000000;
 
 static SimpleUTXOMap BuildSimpleUtxoMap(const std::vector<CTransaction>& txs)
@@ -295,7 +295,7 @@ BOOST_FIXTURE_TEST_CASE(dip3_protx, TestChain400Setup)
 
     CBlockIndex* chainTip = chainActive.Tip();
     int nHeight = chainTip->nHeight;
-    UpdateNetworkUpgradeParameters(Consensus::UPGRADE_V6_0, nHeight + 2);
+//    UpdateNetworkUpgradeParameters(Consensus::UPGRADE_VNEXT, nHeight + 2);
 
     // load empty list (last block before enforcement)
     CreateAndProcessBlock({}, coinbaseKey);
@@ -797,7 +797,7 @@ BOOST_FIXTURE_TEST_CASE(dip3_protx, TestChain400Setup)
         BOOST_CHECK_EQUAL(dmn->pdmnState->nPoSeBanHeight, nHeight);
     }
 
-    UpdateNetworkUpgradeParameters(Consensus::UPGRADE_V6_0, Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT);
+//    UpdateNetworkUpgradeParameters(Consensus::UPGRADE_VNEXT, Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

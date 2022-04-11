@@ -1,5 +1,5 @@
 // Copyright (c) 2016-2020 The ZCash developers
-// Copyright (c) 2021 The PIVX developers
+// Copyright (c) 2021 The OASIS developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
@@ -1002,7 +1002,7 @@ KeyAddResult SaplingScriptPubKeyMan::AddSpendingKeyToWallet(
 
             int64_t nTimeToSet;
             // Sapling addresses can't have been used in transactions prior to activation.
-            if (params.vUpgrades[Consensus::UPGRADE_V5_0].nActivationHeight == Consensus::NetworkUpgrade::ALWAYS_ACTIVE) {
+            if (params.vUpgrades[Consensus::UPGRADE_V4_0].nActivationHeight == Consensus::NetworkUpgrade::ALWAYS_ACTIVE) {
                 nTimeToSet = nTime;
             } else {
                 // TODO: Update epoch before release v5.
